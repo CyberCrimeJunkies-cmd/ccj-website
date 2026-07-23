@@ -773,7 +773,17 @@ def main():
         f.write(render_static_page("contact", "Contact | Cyber Crime Junkies",
                                     "Get in touch about workshops, speaking, or the show.",
                                     "Contact Us", CONTACT_CONTENT))
+    os.makedirs(f"{OUT_DIR}/privacy-policy", exist_ok=True)
+    with open(f"{OUT_DIR}/privacy-policy/index.html", "w", encoding="utf-8") as f:
+        f.write(render_static_page("privacy-policy", "Privacy Policy | Cyber Crime Junkies",
+                                     "Privacy Policy for Cyber Crime Junkies and cybercrimejunkies.com.",
+                                     "Privacy Policy", PRIVACY_CONTENT))
 
+    os.makedirs(f"{OUT_DIR}/guest-policy", exist_ok=True)
+    with open(f"{OUT_DIR}/guest-policy/index.html", "w", encoding="utf-8") as f:
+        f.write(render_static_page("guest-policy", "Podcast Guest Policy | Cyber Crime Junkies",
+                                     "Podcast Guest Policy for Cyber Crime Junkies. What guests agree to before recording.",
+                                     "Podcast Guest Policy", GUEST_POLICY_CONTENT))
     os.makedirs(f"{OUT_DIR}/chaos-brief-newsletter", exist_ok=True)
     with open(f"{OUT_DIR}/chaos-brief-newsletter/index.html", "w", encoding="utf-8") as f:
         f.write(render_static_page("chaos-brief-newsletter", "The Chaos Brief Newsletter | Cyber Crime Junkies",
