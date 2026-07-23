@@ -513,14 +513,9 @@ RESOURCES_CONTENT = """
       <button type="submit" class="buy-now-btn">Get the Checklist</button>
     </form>
   </div>
-  <div class="resource-card">
-    <h3>Ransomware Response Plan Template</h3>
-    <p>The first 24 hours: who to call, what to preserve, what not to do.</p>
-    <a href="/contact">Get the guide</a>
-  </div>
+  
 </div>
-<p><em>Editorial note: replace the Ransomware Response Plan Template placeholder with the real guide, same gated-email
-pattern as the others, before launch.</em></p>
+
 """
 
 THANK_YOU_PAGES = {
