@@ -351,6 +351,13 @@ def render_homepage(episodes):
     </div>
     <a class="see-all" href="/episodes">See all episodes</a>
   </section>
+  <section class="speaking-banner">
+  <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro speaking to a live audience">
+  <div class="speaking-banner-overlay">
+    <h2>David Dean Mauro travels the country turning true cyber crime stories into entertaining training people remember and actually take action on.</h2>
+    <a class="buy-now-btn" href="/speaking">Book David Dean</a>
+  </div>
+</section>
 </main>
 {footer()}
 </body>
@@ -721,6 +728,10 @@ main { max-width:1000px; margin:0 auto; padding:32px 20px; }
 .episode-list { list-style:none; padding:0; }
 .episode-list li { padding:10px 0; border-bottom:1px solid #223349; display:flex; justify-content:space-between; }
 .site-footer { background:var(--navy); text-align:left; padding:40px 24px; color:var(--muted); font-size:0.85rem; }
+.speaking-banner { position:relative; border-radius:10px; overflow:hidden; margin:32px 0; }
+.speaking-banner img { width:100%; height:340px; object-fit:cover; display:block; }
+.speaking-banner-overlay { position:absolute; top:0; left:0; height:100%; width:60%; display:flex; flex-direction:column; justify-content:center; padding:32px; background:linear-gradient(90deg, rgba(18,35,61,0.95) 40%, rgba(18,35,61,0) 100%); }
+.speaking-banner-overlay h2 { color:#fff; font-size:1.6rem; line-height:1.3; margin-bottom:20px; }
 .footer-columns { display:flex; gap:40px; flex-wrap:wrap; max-width:1000px; margin:0 auto 24px; }
 .footer-col { flex:1; min-width:160px; }
 .footer-col h4 { color:#fff; margin-bottom:12px; }
