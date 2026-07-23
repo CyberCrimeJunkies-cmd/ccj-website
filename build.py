@@ -656,7 +656,11 @@ main { max-width:1000px; margin:0 auto; padding:32px 20px; }
 .chapters .ts { color:var(--muted); display:inline-block; width:60px; }
 .episode-list { list-style:none; padding:0; }
 .episode-list li { padding:10px 0; border-bottom:1px solid #223349; display:flex; justify-content:space-between; }
-.site-footer { text-align:center; padding:24px; color:var(--muted); font-size:0.85rem; }
+.site-footer { background:var(--navy); text-align:left; padding:40px 24px; color:var(--muted); font-size:0.85rem; }
+.footer-columns { display:flex; gap:40px; flex-wrap:wrap; max-width:1000px; margin:0 auto 24px; }
+.footer-col { flex:1; min-width:160px; }
+.footer-col h4 { color:#fff; margin-bottom:12px; }
+.footer-col a { display:block; color:var(--muted); margin-bottom:8px; }
 audio { width:100%; margin:16px 0; }
 .logo-img { height:32px; width:32px; object-fit:cover; border-radius:6px; vertical-align:middle; margin-right:8px; }
 .episodes-hero { display:flex; gap:24px; align-items:center; background:#16233a; border-radius:10px; padding:24px; margin-bottom:32px; flex-wrap:wrap; }
