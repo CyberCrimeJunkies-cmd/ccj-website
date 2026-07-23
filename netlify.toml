@@ -1,0 +1,28 @@
+[build]
+  command = "python3 build.py"
+  publish = "dist"
+
+[[redirects]]
+  from = "/chaos-brief"
+  to = "/chaos-brief-newsletter"
+  status = 301
+
+[[redirects]]
+  from = "/video/*"
+  to = "/episode/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/blog/*"
+  to = "/episode/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/home"
+  to = "/"
+  status = 301
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
