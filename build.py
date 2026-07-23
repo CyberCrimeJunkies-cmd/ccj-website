@@ -182,6 +182,7 @@ def nav():
     <a href="/resources">Resources</a>
     <a href="/episodes">Episodes</a>
     <a href="/about">About</a>
+    <a href="/speaking">Speaking</a>
     <a href="/contact">Contact Us</a>
   </nav>
 </header>"""
@@ -198,6 +199,7 @@ def footer():
         <a href="/resources">Resources</a>
         <a href="/episodes">Episodes</a>
         <a href="/about">About</a>
+        <a href="/speaking">Speaking</a>
         <a href="/contact">Contact Us</a>
       </div>
       <div class="footer-col">
@@ -581,6 +583,33 @@ CONTACT_CONTENT = """
 <p>Reach out about workshops, speaking, podcast guesting, or press.</p>
 <p>Email: <a href="mailto:cybercrimejunkies@gmail.com">cybercrimejunkies@gmail.com</a></p>
 """
+SPEAKING_CONTENT = """
+<img src="/images/speaking-hero.jpg" alt="Dean Mauro speaking on stage" class="book-hero-img">
+<h2>Public Speaking</h2>
+<div class="about-hero">
+  <img src="/images/speaking-portrait.jpg" alt="Dean Mauro, author and host" class="about-hero-img">
+  <div>
+    <p>Before Cyber Crime Junkies, David Dean Mauro spent decades as a trial lawyer. He hosts the podcast, sits on FBI InfraGard, serves as VP of Strategic Growth at NetGain Technologies, and wrote the Moving Target trilogy. He has delivered live cyber and AI awareness trainings to organizations across North America and sat across from federal agents, ransomware negotiators, and people who just found out.</p>
+    <p>His talks turn courtroom instinct into boardroom clarity. No jargon. No fear-mongering. Just the real mechanics of how criminals pick their targets, and how to stop being one.</p>
+  </div>
+</div>
+<h2>Speaking Topics</h2>
+<ul>
+  <li>The Invisibility Fallacy &mdash; why "we're too small to be a target" gets SMBs breached</li>
+  <li>AI Is Obedient, Not Evil &mdash; AI governance for organizations moving fast</li>
+  <li>Inside the Business of Ransomware &mdash; what negotiators and victims actually see</li>
+  <li>The Human Firewall &mdash; social engineering and the psychology of the click</li>
+  <li>Healthcare Under Fire &mdash; protecting patient data and patient lives from cybercrime</li>
+  <li>Move. They Miss. &mdash; building a moving-target security culture for SMB leaders</li>
+</ul>
+<div class="about-shelf-row">
+  <img src="/images/speaking-gallery-1.jpg" alt="Dean Mauro speaking at an industry conference">
+  <img src="/images/speaking-gallery-2.jpg" alt="Dean Mauro speaking at a leadership summit">
+  <img src="/images/speaking-gallery-3.jpg" alt="Dean Mauro on stage before a large audience">
+  <img src="/images/speaking-gallery-4.jpg" alt="Dean Mauro presenting on stage">
+</div>
+<p><a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book Dean to Speak</a></p>
+"""
 PRIVACY_CONTENT = """
 <h2>Privacy Policy</h2>
 <p>Last updated: 2026</p>
@@ -626,7 +655,7 @@ GUEST_POLICY_CONTENT = """
 """
 
 def render_sitemap(episodes):
-    urls = ["", "/about", "/book-series", "/resources", "/episodes", "/contact", "/chaos-brief-newsletter", "/privacy-policy", "/guest-policy"]
+    urls = ["", "/about", "/book-series", "/resources", "/episodes", "/contact", "/chaos-brief-newsletter", "/privacy-policy", "/guest-policy", "/speaking"]
     entries = "\n".join(f"  <url><loc>{SITE_URL}{u}</loc></url>" for u in urls)
     ep_entries = "\n".join(f"  <url><loc>{SITE_URL}/episode/{e['slug']}</loc></url>" for e in episodes)
     return f"""<?xml version="1.0" encoding="UTF-8"?>
@@ -817,6 +846,11 @@ def main():
                                      "Podcast Guest Policy for Cyber Crime Junkies. What guests agree to before recording.",
                                      "Podcast Guest Policy", GUEST_POLICY_CONTENT))
     os.makedirs(f"{OUT_DIR}/chaos-brief-newsletter", exist_ok=True)
+    os.makedirs(f"{OUT_DIR}/speaking", exist_ok=True)
+    with open(f"{OUT_DIR}/speaking/index.html", "w", encoding="utf-8") as f:
+        f.write(render_static_page("speaking", "Public Speaking | Cyber Crime Junkies",
+                                     "Book Dean Mauro to speak on cybersecurity and AI governance for SMB and healthcare leaders.",
+                                     "Public Speaking", SPEAKING_CONTENT))
     with open(f"{OUT_DIR}/chaos-brief-newsletter/index.html", "w", encoding="utf-8") as f:
         f.write(render_static_page("chaos-brief-newsletter", "The Chaos Brief Newsletter | Cyber Crime Junkies",
                                     "Weekly cybersecurity and AI true crime stories, straight to your inbox.",
