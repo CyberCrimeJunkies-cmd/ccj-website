@@ -598,7 +598,7 @@ GUEST_POLICY_CONTENT = """
 """
 
 def render_sitemap(episodes):
-    urls = ["", "/about", "/book-series", "/resources", "/episodes", "/contact", "/chaos-brief-newsletter"]
+    urls = ["", "/about", "/book-series", "/resources", "/episodes", "/contact", "/chaos-brief-newsletter", "/privacy-policy", "/guest-policy"]
     entries = "\n".join(f"  <url><loc>{SITE_URL}{u}</loc></url>" for u in urls)
     ep_entries = "\n".join(f"  <url><loc>{SITE_URL}/episode/{e['slug']}</loc></url>" for e in episodes)
     return f"""<?xml version="1.0" encoding="UTF-8"?>
