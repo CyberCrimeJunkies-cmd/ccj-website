@@ -553,7 +553,49 @@ CONTACT_CONTENT = """
 <p>Reach out about workshops, speaking, podcast guesting, or press.</p>
 <p>Email: <a href="mailto:cybercrimejunkies@gmail.com">cybercrimejunkies@gmail.com</a></p>
 """
+PRIVACY_CONTENT = """
+<h2>Privacy Policy</h2>
+<p>Last updated: 2026</p>
+<p>Cyber Crime Junkies ("we," "us," or "our") operates cybercrimejunkies.com. This policy explains what information we collect, how we use it, and what rights you have over it.</p>
+<h2>Information We Collect</h2>
+<p>When you contact us through our website form, we collect your name and email address. If you subscribe to the Chaos Brief newsletter, we collect your email address. We do not sell this information to anyone.</p>
+<h2>Third-Party Services</h2>
+<p>Our site uses the following third-party services, each with their own privacy practices: Buzzsprout hosts our podcast audio. Netlify hosts our website, with the site built from a GitHub repository. YouTube hosts our video content. Substack and LinkedIn host our newsletter. Each of these services may collect usage data independently.</p>
+<h2>Analytics</h2>
+<p>We may collect basic, anonymized traffic data to understand how visitors use the site. This data does not identify you personally.</p>
+<h2>Cookies</h2>
+<p>Our website may use cookies to function properly. You can disable cookies in your browser settings, though some site features may not work as a result.</p>
+<h2>Your Rights</h2>
+<p>You may request to see, correct, or delete any personal information we hold about you. To do so, contact us at the email address listed on our Contact page.</p>
+<h2>Children's Privacy</h2>
+<p>This site is not directed at children under 13. We do not knowingly collect information from children.</p>
+<h2>Changes to This Policy</h2>
+<p>We may update this policy as our site evolves. Changes will be posted on this page with an updated date.</p>
+<h2>Contact</h2>
+<p>For privacy-related questions, contact us at cybercrimejunkies@gmail.com</p>
+"""
 
+GUEST_POLICY_CONTENT = """
+<p>Effective Date: June 2026 | cybercrimejunkies.com</p>
+<p>Thank you for appearing on Cyber Crime Junkies. Before we record, please read this policy. It is short, plain, and fair. If you have questions, email us before your session.</p>
+<h2>What You're Agreeing To</h2>
+<p>By participating in a Cyber Crime Junkies recording session, you grant Cyber Crime Junkies and its host Dean Mauro a perpetual, royalty-free, worldwide license to use your name, voice, likeness, and the content of your interview. That license covers all current and future media formats including audio, video, short-form clips, transcripts, and written summaries.</p>
+<h2>How Your Appearance May Be Used</h2>
+<p>Your interview may be published as a full podcast episode, a short-form clip, a YouTube video, a social media post, a newsletter feature, or a written recap. We may edit for length, clarity, and pacing. We will not misrepresent your words or take statements out of context in a way that changes their meaning.</p>
+<h2>What You Own</h2>
+<p>You retain all rights to your own intellectual property, including any proprietary frameworks, methodologies, or published works you discuss. Appearing on CCJ does not transfer ownership of your ideas or content to us. All video, audio and imagery used for the podcast, newsletter and future discussion created by us are owned exclusively by us.</p>
+<h2>Promotion and Sharing</h2>
+<p>We encourage you to share your episode. We will provide you with a shareable link, cover art, and clip assets when available. You may promote your appearance on any channel.</p>
+<h2>Content Standards</h2>
+<p>Cyber Crime Junkies covers cybersecurity, AI risk, and organized cybercrime for business audiences. Guests are expected to present information in good faith, disclose any material conflicts of interest, and avoid making false or defamatory claims about individuals or organizations. We reserve the right to decline to publish any recording, in whole or in part, if it does not meet our editorial standards or creates legal exposure.</p>
+<h2>No Compensation</h2>
+<p>Guest appearances are unpaid unless otherwise agreed in writing before the session.</p>
+<h2>No Endorsement</h2>
+<p>Appearing on Cyber Crime Junkies does not constitute an endorsement by David Dean Mauro, Cyber Crime Junkies or NetGain Technologies of your products, services, or organization, unless explicitly stated on air or in writing.</p>
+<h2>Questions</h2>
+<p>Contact us at: cybercrimejunkies@gmail.com</p>
+<p>Cyber Crime Junkies is produced by <strong>David Dean Mauro | Cyber Crime Junkies</strong></p>
+"""
 
 def render_sitemap(episodes):
     urls = ["", "/about", "/book-series", "/resources", "/episodes", "/contact", "/chaos-brief-newsletter"]
