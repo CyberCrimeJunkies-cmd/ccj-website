@@ -553,22 +553,27 @@ BOOK_SERIES_CONTENT = """
   <div class="book-card">
     <img src="/images/book1-cover.png" alt="Book 1: Art of Online Camouflage cover" class="book-cover-img">
     <h3>Book 1: Art of Online Camouflage</h3>
-    <a class="buy-now-btn" href="https://www.audible.com/pd/B0GXGS1ZHC/?source_code=AUDFPWS0223189MWT-BK-ACX0-506376&amp;ref=acx_bty_BK_ACX0_506376_rh_us">Buy Now</a>
+    <p>Stevie Parker did everything right. Good career. Growing company. A private equity deal on the horizon. She was smart, capable, and completely unaware she had already been selected. Not hacked. Selected.</p>
+    <p>Available in paperback, hardcover, Kindle, and audiobook.</p>
+    <p><strong>Only $17.76 Exclusive Hardcover. Special Offer &mdash; Limited Time 30% off.</strong></p>
+    <a class="buy-now-btn" href="https://shop.ingramspark.com/b/084?params=d0YQ1pYtxeBRmSQLHLb9uT4aOliPrEuDSfOjQgpXQP9">Exclusive Copy</a>
   </div>
   <div class="book-card">
     <img src="/images/book2-cover.png" alt="Book 2: Obedient Machine cover" class="book-cover-img">
     <h3>Book 2: Obedient Machine</h3>
-    <a class="buy-now-btn" href="https://shop.ingramspark.com/b/084?params=S3F9zWWMC2y2eYiTmUGP91Owy9AUVG4zbLa6NwuX3cl">Buy Now</a>
+    <p>Stevie survived Book One. She got skeptical. She stopped being the easiest target on the street. Then her company adopted AI and had to learn a completely different lesson. AI is not evil. It is obedient. It does exactly what you tell it to do &mdash; and exactly what you fail to tell it not to do.</p>
+    <p>Available in paperback, hardcover, Kindle, and audiobook.</p>
+    <p><strong>Only $17.76 Exclusive Hardcover. Special Offer &mdash; Limited Time 30% off.</strong></p>
+    <a class="buy-now-btn" href="https://shop.ingramspark.com/b/084?params=S3F9zWWMC2y2eYiTmUGP91Owy9AUVG4zbLa6NwuX3cl">Exclusive Copy</a>
   </div>
   <div class="book-card">
     <img src="/images/book3-cover.png" alt="Book 3: The Ghost and the Machine cover" class="book-cover-img">
     <h3>Book 3: The Ghost and the Machine</h3>
+    <p>Stevie already knows she is a target. This book is about what she does about it. The most dangerous thing you can be right now is findable.</p>
     <p>Releases September 22, 2026.</p>
-    <a class="buy-now-btn" href="https://a.co/0gG92uN0">Presale Offer &mdash; Live 9/22</a>
+    <a class="buy-now-btn" href="https://a.co/d/027LCoh6">Presale Offer &mdash; Live 9/22</a>
   </div>
 </div>
-<p><em>Editorial note: add reader reviews and a first-chapter excerpt before launch &mdash; these were flagged as missing in
-the site audit.</em></p>
 <p><a class="buy-now-btn" href="/files/moving-target-media-flyer.pdf" download>Download Media Flyer (PDF)</a></p>
 """
 
