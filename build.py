@@ -189,8 +189,31 @@ def nav():
 
 def footer():
     return f"""<footer class="site-footer">
-  <p>&copy; 2026 David Dean Mauro &mdash; Cyber Crime Junkies Media</p>
-</footer>"""
+    <div class="footer-columns">
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <a href="/">Home</a>
+        <a href="/book-series">Book Series</a>
+        <a href="/chaos-brief-newsletter">Chaos Brief Newsletter</a>
+        <a href="/resources">Resources</a>
+        <a href="/episodes">Episodes</a>
+        <a href="/about">About</a>
+        <a href="/contact">Contact Us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/guest-policy">Podcast Guest Policy</a>
+        <a href="/resources">Resources (Download Guides)</a>
+      </div>
+      <div class="footer-col">
+        <h4>Follow Our Podcast</h4>
+        <a href="https://www.youtube.com/@CyberCrimeJunkiesPodcast">YouTube</a>
+        <a href="https://www.buzzsprout.com/2014652">Listen Everywhere</a>
+      </div>
+    </div>
+    <p>&copy; 2026 David Dean Mauro &mdash; Cyber Crime Junkies Media</p>
+    </footer>"""
 
 
 def episode_schema(ep):
