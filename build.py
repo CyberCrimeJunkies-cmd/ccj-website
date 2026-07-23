@@ -605,6 +605,41 @@ SPEAKING_CONTENT = """
 </div>
 <p><a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book Dean to Speak</a></p>
 """
+NEWSLETTER_CONTENT = """
+<p>Subscribe on <a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/">LinkedIn</a> or <a href="https://chaosbrief.substack.com/">Substack</a>.</p>
+<div class="resource-grid">
+  <div class="resource-card">
+    <img src="/images/newsletter-1.png" alt="OSINT Unmasked cover" class="book-cover-img">
+    <p class="episode-meta">July 20, 2026</p>
+    <h3><a href="https://cybercrimejunkies.com/blog/osint-unmasked-the-ethical-hacker-who-traced-an-anonymous-cybercriminal-in-one-hour">OSINT Unmasked: The Ethical Hacker Who Traced an Anonymous Cybercriminal in One Hour</a></h3>
+    <p>How ethical hacker Mishaal Khan traced an anonymous cybercriminal in one hour using only public data, no malware, no dark web.</p>
+  </div>
+  <div class="resource-card">
+    <img src="/images/newsletter-2.png" alt="EY Data Breach 2026 cover" class="book-cover-img">
+    <p class="episode-meta">July 19, 2026</p>
+    <h3><a href="https://cybercrimejunkies.com/blog/ey-data-breach-2026-what-the-filings-confirm-what-they-hide-and-what-to-do-next">EY Data Breach 2026: What the Filings Confirm, What They Hide, and What To Do Next</a></h3>
+    <p>What the EY breach filings confirm, what they hide, and what leaders should do next, including passport scans, tax filings, and a missecured support-ticket platform.</p>
+  </div>
+  <div class="resource-card">
+    <img src="/images/newsletter-3.png" alt="CMMC Just Hit Pause cover" class="book-cover-img">
+    <p class="episode-meta">July 14, 2026</p>
+    <h3><a href="https://cybercrimejunkies.com/blog/cmmc-just-hit-pause-your-primes-didn-t-get-the-memo">CMMC Just Hit Pause. Your Primes Didn't Get the Memo.</a></h3>
+    <p>What changed on July 13, what stayed the same, and why the "we can relax" crowd faces an expensive wake-up call.</p>
+  </div>
+  <div class="resource-card">
+    <img src="/images/newsletter-4.png" alt="The Data Breach Always Ends the Same Way cover" class="book-cover-img">
+    <p class="episode-meta">July 13, 2026</p>
+    <h3><a href="https://cybercrimejunkies.com/blog/the-data-breach-always-ends-the-same-way-until-it-doesn-t">The Data Breach Always Ends the Same Way. Until It Doesn't.</a></h3>
+    <p>How data-breach stories usually end, and why this one breaks the mold in The Moving Target Trilogy.</p>
+  </div>
+  <div class="resource-card">
+    <img src="/images/newsletter-5.png" alt="How One Phone Call Stopped a Million-Dollar Heist cover" class="book-cover-img">
+    <p class="episode-meta">July 08, 2026</p>
+    <h3><a href="https://cybercrimejunkies.com/blog/how-one-phone-call-stopped-a-million-dollar-heist">How One Phone Call Stopped a Million-Dollar Heist</a></h3>
+    <p>The attack was already inside. Thirty seconds of training bought everything. Why the smartest people in the room are the ones who get fooled.</p>
+  </div>
+</div>
+"""
 PRIVACY_CONTENT = """
 <h2>Privacy Policy</h2>
 <p>Last updated: 2026</p>
@@ -849,8 +884,7 @@ def main():
     with open(f"{OUT_DIR}/chaos-brief-newsletter/index.html", "w", encoding="utf-8") as f:
         f.write(render_static_page("chaos-brief-newsletter", "The Chaos Brief Newsletter | Cyber Crime Junkies",
                                     "Weekly cybersecurity and AI true crime stories, straight to your inbox.",
-                                    "The Chaos Brief Newsletter",
-                                    "<p>Subscribe on <a href='https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/'>LinkedIn</a> or <a href='https://chaosbrief.substack.com/'>Substack</a>.</p>"))
+                                    "The Chaos Brief Newsletter", NEWSLETTER_CONTENT))
 
     with open(f"{OUT_DIR}/sitemap.xml", "w", encoding="utf-8") as f:
         f.write(render_sitemap(episodes))
