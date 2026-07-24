@@ -590,10 +590,11 @@ CONTACT_CONTENT = """
 <p>Email: <a href="mailto:cybercrimejunkies@gmail.com">cybercrimejunkies@gmail.com</a></p>
 """
 SPEAKING_CONTENT = """
-<img src="/images/speaking-hero.jpg" alt="Dean Mauro speaking on stage" class="book-hero-img">
+SPEAKING_CONTENT = """
+<img src="/images/speaking-hero.jpg" alt="David Dean Mauro speaking on stage" class="book-hero-img">
 <h2>Public Speaking</h2>
 <div class="about-hero">
-  <img src="/images/speaking-portrait.jpg" alt="Dean Mauro, author and host" class="about-hero-img">
+  <img src="/images/speaking-gallery-2.jpg" alt="David Dean Mauro speaking at a leadership summit" class="speaking-lead-img">
   <div>
     <p>Before Cyber Crime Junkies, David Dean Mauro spent decades as a trial lawyer. He hosts the podcast, sits on FBI InfraGard, serves as VP of Strategic Growth at NetGain Technologies, and wrote the Moving Target trilogy. He has delivered live cyber and AI awareness trainings to organizations across North America and sat across from federal agents, ransomware negotiators, and people who just found out.</p>
     <p>His talks turn courtroom instinct into boardroom clarity. No jargon. No fear-mongering. Just the real mechanics of how criminals pick their targets, and how to stop being one.</p>
@@ -609,12 +610,11 @@ SPEAKING_CONTENT = """
   <li>Move. They Miss. &mdash; building a moving-target security culture for SMB leaders</li>
 </ul>
 <div class="about-shelf-row">
-  <img src="/images/speaking-gallery-1.jpg" alt="Dean Mauro speaking at an industry conference">
-  <img src="/images/speaking-gallery-2.jpg" alt="Dean Mauro speaking at a leadership summit">
-  <img src="/images/speaking-gallery-3.jpg" alt="Dean Mauro on stage before a large audience">
-  <img src="/images/speaking-gallery-4.jpg" alt="Dean Mauro presenting on stage">
+  <img src="/images/speaking-gallery-1.jpg" alt="David Dean Mauro speaking at an industry conference">
+  <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro on stage before a large audience">
 </div>
-<p><a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book Dean to Speak</a></p>
+<img src="/images/speaking-portrait.jpg" alt="David Dean Mauro, author and host" class="about-hero-img">
+<p><a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book David Dean to Speak</a></p>
 """
 NEWSLETTER_CONTENT = """
 <p>Subscribe on <a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/">LinkedIn</a> or <a href="https://chaosbrief.substack.com/">Substack</a>.</p>
@@ -790,6 +790,7 @@ h1, h2 { font-family:'Anton', Impact, 'Haettenschweiler', 'Arial Narrow Bold', s
 .proof-bar { color:#C55A11; font-size:0.9rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin:12px 0 0; }
 .episode-card h3 { color:#ffffff; }
 .episode-card p { color:#7eb2d0; }
+.speaking-lead-img { width:100%; max-width:380px; border-radius:10px; }
 .episode-card .episode-meta { color:var(--muted); }"""
 
 
