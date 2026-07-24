@@ -167,6 +167,9 @@ def base_head(title, description, canonical_path, extra_schema=""):
 <meta property="og:site_name" content="{SITE_NAME}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@cybercrimejunky">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
 <link rel="stylesheet" href="/style.css">
 {extra_schema}"""
 
@@ -291,7 +294,7 @@ def render_episode_page(ep):
 
 def render_homepage(episodes):
     title = "Cyber Crime Junkies | True Crime Stories & AI Security Podcast"
-    desc = "True crime stories and expert interviews on cybersecurity and AI. Hosted by Dean Mauro. New episodes and the Chaos Brief newsletter every week."
+    desc = "True crime stories and expert interviews on cybersecurity and AI. Hosted by David Dean Mauro. New episodes and the Chaos Brief newsletter every week."
 
     cards = ""
     for ep in episodes[:12]:
@@ -308,7 +311,7 @@ def render_homepage(episodes):
   "name": "Cyber Crime Junkies",
   "url": "{SITE_URL}",
   "description": {json_str(desc)},
-  "author": {{"@type": "Person", "name": "Dean Mauro"}}
+  "author": {{"@type": "Person", "name": "David Dean Mauro"}}
 }}
 </script>"""
 
@@ -323,8 +326,9 @@ def render_homepage(episodes):
   <section class="hero">
     <img src="/images/dean-closeup.jpg" alt="Dean Mauro, host of Cyber Crime Junkies" class="hero-img-home">
     <div>
-      <h1>Cybersecurity and AI True Crime for Business Leaders</h1>
-      <p>Real cybercrime stories, expert interviews, and AI security explained in plain language. Hosted by Dean Mauro.</p>
+      <h1>AI Is Not Evil. It Is Obedient.</h1>
+      <p>It does what you tell it to do. It also does what you fail to tell it not to. Real cybercrime stories and AI security in plain language. Hosted by David Dean Mauro.</p>
+      <p class="proof-bar">9 Seasons &middot; 400+ Interviews &middot; #1 Amazon New Release &middot; FBI InfraGard</p>
     </div>
   </section>
 
@@ -342,7 +346,7 @@ def render_homepage(episodes):
 
   <section class="home-studio-row">
     <img src="/images/home-hacking-hacker.jpg" alt="Cyber Crime Junkies studio shelf with Hacking the Hacker">
-    <img src="/images/home-monitors.jpg" alt="Cyber Crime Junkies studio multi-monitor setup">
+    <img src="/images/home-monitors.jpg" alt="Cyber Crime Junkies studio multi-monitor setup"><img src="/images/dm-rain.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies">
   </section>
   <section class="spotlight">
     <h2>Latest Episodes</h2>
@@ -781,7 +785,12 @@ audio { width:100%; margin:16px 0; }
 .book-shelf-row { display:flex; gap:16px; margin:24px 0 32px; flex-wrap:wrap; }
 .book-shelf-row img { width:100%; max-width:420px; border-radius:10px; flex:1; min-width:280px; }
 .buzzsprout-player { max-width:700px; margin:24px 0; }
-"""
+h1, h2 { font-family:'Anton', Impact, 'Haettenschweiler', 'Arial Narrow Bold', sans-serif; font-weight:400; letter-spacing:0.5px; text-transform:uppercase; line-height:1.15; }
+.hero h1 { font-size:2.8rem; margin-bottom:8px; }
+.proof-bar { color:#C55A11; font-size:0.9rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin:12px 0 0; }
+.episode-card h3 { color:#ffffff; }
+.episode-card p { color:#7eb2d0; }
+.episode-card .episode-meta { color:var(--muted); }"""
 
 
 def copy_images():
