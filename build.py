@@ -496,6 +496,7 @@ RESOURCES_CONTENT = """
 <div class="resource-grid">
   <div class="resource-card">
     <h3>AI Prompt Guide</h3>
+    <img src="/images/resource-ai-prompt-guide.jpg" alt="AI Prompt Guide cover" class="book-cover-img">
     <p>Five ready-to-use prompts: personalize any AI to sound like you, verify outputs before you trust them, build an
     executive briefing agent, and manage tool and vendor decisions.</p>
     <form name="ai-prompt-guide" method="POST" data-netlify="true" action="/resources/ai-prompt-guide-thank-you/">
@@ -505,6 +506,7 @@ RESOURCES_CONTENT = """
     </form>
   </div>
   <div class="resource-card">
+  <img src="/images/resource-ai-governance-guide.jpg" alt="AI Governance and Personal Set Up Guide cover" class="book-cover-img">
     <h3>AI Governance &amp; Personal Set Up Guide</h3>
     <p>What to do and not do with AI at work, how to set up AI to teach you anything, the most common governance gaps,
     and a full governance checklist for leadership teams.</p>
@@ -515,6 +517,7 @@ RESOURCES_CONTENT = """
     </form>
   </div>
   <div class="resource-card">
+  <img src="/images/resource-camouflage-checklist.jpg" alt="Moving Target Camouflage Checklist cover" class="book-cover-img">
     <h3>Moving Target Camouflage Checklist</h3>
     <p>The full checklist from the book on one page &mdash; password managers, LinkedIn exposure, people-search
     removal, verifying vendors, and the family code word. Ten actions, no jargon.</p>
@@ -780,7 +783,7 @@ audio { width:100%; margin:16px 0; }
 .about-shelf-row img { width:100%; max-width:380px; border-radius:10px; flex:1; min-width:280px; }
 .team-graphic-img { width:100%; max-width:900px; border-radius:10px; display:block; margin:0 auto; }
 .home-studio-row { display:flex; gap:16px; margin:24px 0; flex-wrap:wrap; }
-.home-studio-row img { width:100%; max-width:340px; border-radius:10px; flex:1; min-width:260px; }
+.home-studio-row img { width:100%; max-width:340px; height:240px; object-fit:cover; border-radius:10px; flex:1; min-width:260px; }
 .book-shelf-row { display:flex; gap:16px; margin:24px 0 32px; flex-wrap:wrap; }
 .book-shelf-row img { width:100%; max-width:420px; border-radius:10px; flex:1; min-width:280px; }
 .buzzsprout-player { max-width:700px; margin:24px 0; }
