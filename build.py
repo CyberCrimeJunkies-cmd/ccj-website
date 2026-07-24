@@ -590,7 +590,6 @@ CONTACT_CONTENT = """
 <p>Email: <a href="mailto:cybercrimejunkies@gmail.com">cybercrimejunkies@gmail.com</a></p>
 """
 SPEAKING_CONTENT = """
-SPEAKING_CONTENT = """
 <img src="/images/speaking-hero.jpg" alt="David Dean Mauro speaking on stage" class="book-hero-img">
 <h2>Public Speaking</h2>
 <div class="about-hero">
