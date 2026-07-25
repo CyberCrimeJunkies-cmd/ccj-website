@@ -362,6 +362,11 @@ def render_homepage(episodes):
     <a class="buy-now-btn" href="/speaking">Book David Dean</a>
   </div>
 </section>
+<section class="home-studio-row">
+  <img src="/images/speaking-new-2.jpg" alt="David Dean Mauro speaking at a live cybersecurity training">
+  <img src="/images/speaking-new-1.jpg" alt="David Dean Mauro presenting to business leaders">
+  <img src="/images/speaking-new-3.jpg" alt="Executives attending a Cyber Crime Junkies live training">
+</section>
 </main>
 {footer()}
 </body>
@@ -613,6 +618,19 @@ SPEAKING_CONTENT = """
 </ul>
 <div class="about-shelf-row">
   <img src="/images/speaking-gallery-1.jpg" alt="David Dean Mauro speaking at an industry conference">
+  </div>
+<div class="about-shelf-row">
+  <img src="/images/speaking-new-1.jpg" alt="David Dean Mauro presenting to a live audience">
+  <img src="/images/speaking-new-2.jpg" alt="David Dean Mauro speaking at the Graphic Media Alliance Encore event">
+</div>
+<div class="about-shelf-row">
+  <img src="/images/speaking-new-3.jpg" alt="Executives attending a Cyber Crime Junkies live training session">
+  <img src="/images/speaking-new-4.jpg" alt="Attendee photographing a slide during a live cyber training">
+</div>
+<div class="about-shelf-row">
+  <img src="/images/speaking-new-5.jpg" alt="Business leaders listening during a live cybersecurity training">
+</div>
+<div class="about-shelf-row">
   <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro on stage before a large audience">
 </div>
 <img src="/images/speaking-portrait.jpg" alt="David Dean Mauro, author and host" class="about-hero-img">
