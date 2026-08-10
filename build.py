@@ -297,7 +297,7 @@ def render_homepage(episodes):
     desc = "True crime stories and expert interviews on cybersecurity and AI. Hosted by David Dean Mauro. New episodes and the Chaos Brief newsletter every week."
 
     cards = ""
-    for ep in episodes[:12]:
+    for ep in episodes[:3]:
         cards += f"""<a class="episode-card" href="/episode/{ep['slug']}">
   <h3>{html.escape(ep['title'])}</h3>
   <p class="episode-meta">{ep['pub_date_display']}</p>
@@ -328,10 +328,13 @@ def render_homepage(episodes):
     <div>
       <h1>AI Is Not Evil. It Is Obedient.</h1>
       <p>It does what you tell it to do. It also does what you fail to tell it not to. Real cybercrime stories and AI security in plain language. Hosted by David Dean Mauro.</p>
-      <p class="proof-bar">9 Seasons &middot; 400+ Interviews &middot; #1 Amazon New Release &middot; FBI InfraGard</p>
+      
     </div>
   </section>
-
+<div class="proof-band">
+    <div class="full"><span>Award-Winning Podcast</span><span class="dot">&middot;</span><span>9 Seasons</span><span class="dot">&middot;</span><span>400+ Interviews</span><span class="dot">&middot;</span><span>#1 Amazon New Release</span><span class="dot">&middot;</span><span>AI Governance</span><span class="dot">&middot;</span><span>Public Speaking</span><span class="dot">&middot;</span><span>Top 100 GoodPods</span></div>
+    <div class="sm"><span>Award-Winning</span><span class="dot">&middot;</span><span>400+ Interviews</span><span class="dot">&middot;</span><span>#1 Amazon New Release</span><span class="dot">&middot;</span><span>Top 100 GoodPods</span></div>
+  </div>
   <section class="buzzsprout-player">
     <div id="buzzsprout-large-player"></div>
     <script type="text/javascript" charset="utf-8" src="https://www.buzzsprout.com/2014652.js?container_id=buzzsprout-large-player&amp;player=large"></script>
@@ -344,22 +347,26 @@ def render_homepage(episodes):
     <a class="watch-youtube-link" href="https://youtu.be/B_SoawySWQA">Watch on YouTube</a>
   </section>
 
-  <section class="home-studio-row">
+  <section class="home-studio-grid">
     <img src="/images/home-hacking-hacker.jpg" alt="Cyber Crime Junkies studio shelf with Hacking the Hacker">
-    <img src="/images/home-monitors.jpg" alt="Cyber Crime Junkies studio multi-monitor setup"><img src="/images/dm-rain.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies">
+    <img src="/images/home-monitors.jpg" alt="Cyber Crime Junkies studio multi-monitor setup">
+    <img src="/images/dm-rain.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies">
+    <img src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage to a live audience">
+    <img src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
+    <img src="/images/speaking-bctc-5.jpg" alt="David Dean Mauro addressing attendees at a live cyber and AI training">
   </section>
   <section class="spotlight">
     <h2>Latest Episodes</h2>
     <div class="episode-grid">
       {cards}
     </div>
-    <a class="see-all" href="/episodes">See all episodes</a>
+    <a class="see-all" href="/episodes">See more episodes</a>
   </section>
   <section class="speaking-banner">
   <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro speaking to a live audience">
   <div class="speaking-banner-overlay">
-    <h2>David Dean Mauro travels the country turning true cyber crime stories into entertaining training people remember and actually take action on.</h2>
-    <a class="buy-now-btn" href="/speaking">Book David Dean</a>
+   <h2>We perform live in person and virtually turning true crime stories into entertaining education. Your employees can take action on the same day.</h2>
+    <a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book David Dean to Speak</a>
   </div>
 </section>
 <section class="home-studio-row">
@@ -532,6 +539,17 @@ RESOURCES_CONTENT = """
       <button type="submit" class="buy-now-btn">Get the Checklist</button>
     </form>
   </div>
+  <div class="resource-card">
+  <img src="/images/resource-ai-starter-kit.jpg" alt="AI Starter Kit cover" class="book-cover-img">
+    <h3>AI Starter Kit</h3>
+    <p>For anyone starting out with AI. Set it up safely so your work data does not become training data, personalize
+    it so every output sounds like you wrote it, and get it to teach you anything one step at a time.</p>
+    <form name="ai-starter-kit" method="POST" data-netlify="true" action="/resources/ai-starter-kit-thank-you/">
+      <input type="hidden" name="form-name" value="ai-starter-kit">
+      <input type="email" name="email" placeholder="Your email" required>
+      <button type="submit" class="buy-now-btn">Get the Starter Kit</button>
+    </form>
+  </div>
   
 </div>
 
@@ -555,6 +573,11 @@ THANK_YOU_PAGES = {
         "h1": "Thanks — here's your checklist",
         "file": "/files/camouflage-checklist.pdf",
         "label": "Moving Target Camouflage Checklist",
+    },"ai-starter-kit-thank-you": {
+        "title": "Thanks — Your AI Starter Kit Is Ready | Cyber Crime Junkies",
+        "h1": "Thanks — here's your starter kit",
+        "file": "/files/ai-starter-kit.pdf",
+        "label": "AI Starter Kit",
     },
 }
 
@@ -633,7 +656,17 @@ SPEAKING_CONTENT = """
 <div class="about-shelf-row">
   <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro on stage before a large audience">
 </div>
-<img src="/images/speaking-portrait.jpg" alt="David Dean Mauro, author and host" class="about-hero-img">
+<div class="about-shelf-row">
+  <img src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage at Bluegrass Community and Technical College">
+  <img src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
+</div>
+<div class="about-shelf-row">
+  <img src="/images/speaking-bctc-2.jpg" alt="David Dean Mauro at the podium during an AI awareness keynote">
+  <img src="/images/speaking-bctc-3.jpg" alt="David Dean Mauro presenting on AI risk to business leaders">
+</div>
+<div class="about-shelf-row">
+  <img src="/images/speaking-bctc-5.jpg" alt="David Dean Mauro addressing attendees at a live cyber and AI training">
+</div><img src="/images/speaking-portrait.jpg" alt="David Dean Mauro, author and host" class="about-hero-img">
 <p><a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book David Dean to Speak</a></p>
 """
 NEWSLETTER_CONTENT = """
@@ -735,7 +768,7 @@ Sitemap: {SITE_URL}/sitemap.xml
 STYLE_CSS = """
 :root { --navy:#12233d; --blue:#3f6fa3; --bg:#0d1420; --text:#e8edf3; --muted:#9fb0c3; }
 * { box-sizing: border-box; }
-body { margin:0; font-family: 'Segoe UI', Arial, sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+body { margin:0; overflow-x:hidden; font-family: 'Segoe UI', Arial, sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
 a { color:#7eb2d0; text-decoration:none; }
 a:hover { text-decoration:underline; }
 .banner { background:var(--navy); color:#fff; text-align:center; padding:10px; font-size:14px; }
@@ -807,7 +840,14 @@ audio { width:100%; margin:16px 0; }
 .buzzsprout-player { max-width:700px; margin:24px 0; }
 h1, h2 { font-family:'Anton', Impact, 'Haettenschweiler', 'Arial Narrow Bold', sans-serif; font-weight:400; letter-spacing:0.5px; text-transform:uppercase; line-height:1.15; }
 .hero h1 { font-size:2.8rem; margin-bottom:8px; }
-.proof-bar { color:#C55A11; font-size:0.9rem; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin:12px 0 0; }
+.home-studio-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0; }
+.home-studio-grid img { width:100%; height:260px; object-fit:cover; border-radius:10px; display:block; }
+.proof-band { position:relative; margin:8px 0 28px; left:50%; margin-left:-50vw; width:100vw; box-sizing:border-box; background:#C55A11; padding:16px 24px; text-align:center; box-shadow:inset 0 -3px 0 rgba(0,0,0,.28); }
+.proof-band span { font-family:'Anton', Impact, 'Arial Narrow Bold', Arial, sans-serif; font-weight:700; font-size:clamp(13px,1.4vw,19px); letter-spacing:1.2px; text-transform:uppercase; color:#1A2235; line-height:1.7; white-space:nowrap; }
+.proof-band .dot { color:#FFFFFF; padding:0 12px; opacity:.8; }
+.proof-band .sm { display:none; }
+.speaking-banner-overlay .buy-now-btn { align-self:flex-start; }
+@media (max-width:700px) { .home-studio-grid { grid-template-columns:1fr; } .home-studio-grid img { height:220px; } .proof-band { padding:13px 14px; } .proof-band .full { display:none; } .proof-band .sm { display:block; } .proof-band .dot { padding:0 7px; } .speaking-banner img { height:440px; } .speaking-banner-overlay { width:100%; padding:22px; background:linear-gradient(180deg, rgba(18,35,61,0.95) 60%, rgba(18,35,61,0.7) 100%); } .speaking-banner-overlay h2 { font-size:1.15rem; margin-bottom:18px; } }
 .episode-card h3 { color:#ffffff; }
 .episode-card p { color:#7eb2d0; }
 .speaking-lead-img { width:100%; max-width:380px; border-radius:10px; }
