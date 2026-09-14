@@ -325,6 +325,7 @@ def render_homepage(episodes):
 <main class="homepage">
   <section class="hero">
     <img src="/images/dean-closeup.jpg" alt="Dean Mauro, host of Cyber Crime Junkies" class="hero-img-home">
+        <img src="/images/dean-headshot-2026.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies and author of the Moving Target trilogy" class="hero-img-home">
     <div>
       <h1>AI Is Not Evil. It Is Obedient.</h1>
       <p>It does what you tell it to do. It also does what you fail to tell it not to. Real cybercrime stories and AI security in plain language. Hosted by David Dean Mauro.</p>
@@ -509,8 +510,8 @@ RESOURCES_CONTENT = """
   <div class="resource-card">
     <h3>AI Prompt Guide</h3>
     <img src="/images/resource-ai-prompt-guide.jpg" alt="AI Prompt Guide cover" class="book-cover-img">
-    <p>Five ready-to-use prompts: personalize any AI to sound like you, verify outputs before you trust them, build an
-    executive briefing agent, and manage tool and vendor decisions.</p>
+        <p>Sanitize the prompt before you type it. Get the output you wanted the first time. Force the model to flag
+    what it invented. Four parts, an AI privacy checklist, and the prompts worth saving once and reusing forever.</p>
     <form name="ai-prompt-guide" method="POST" data-netlify="true" action="/resources/ai-prompt-guide-thank-you/">
       <input type="hidden" name="form-name" value="ai-prompt-guide">
       <input type="email" name="email" placeholder="Your email" required>
@@ -818,7 +819,9 @@ audio { width:100%; margin:16px 0; }
 .team-member img { width:120px; height:120px; object-fit:cover; border-radius:50%; }
 .team-member p { color:var(--muted); font-size:0.9rem; margin-top:8px; }
 .all-episodes { margin-top:40px; }
-.hero-img-home { width:200px; height:200px; object-fit:cover; border-radius:10px; float:left; margin-right:24px; }
+.hero-img-home { width:160px; height:160px; object-fit:cover; border-radius:10px; float:left; margin-right:16px; margin-bottom:12px; }
+.hero-img-home + .hero-img-home { margin-right:24px; }
+@media (max-width:700px) { .hero-img-home { width:130px; height:130px; margin-right:12px; } }
 .hero { overflow:auto; }
 .about-hero { display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap; margin-bottom:32px; }
 .about-hero-img { width:240px; height:240px; object-fit:cover; border-radius:10px; }
