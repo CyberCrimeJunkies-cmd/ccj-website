@@ -15,6 +15,7 @@ default Python image with zero install step.
 import os
 import re
 import html
+import json
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -23,6 +24,17 @@ RSS_URL = "https://feeds.buzzsprout.com/2014652.rss"
 SITE_URL = "https://cybercrimejunkies.com"
 SITE_NAME = "Cyber Crime Junkies"
 OUT_DIR = "dist"
+DEFAULT_OG_IMAGE = f"{SITE_URL}/images/dm-hero-office.jpg"
+SHOW_DESCRIPTION = ("Cyber Crime Junkies is a true crime podcast and YouTube show about cybercrime and AI security, "
+                    "hosted by David Dean Mauro. Real stories, live training for leaders, and the Moving Target thriller trilogy.")
+SAME_AS = [
+    "https://www.youtube.com/@cybercrimejunkies",
+    "https://www.buzzsprout.com/2014652",
+    "https://podcasts.apple.com/us/podcast/cyber-crime-junkies/id1633932941",
+    "https://open.spotify.com/show/5y4U2v51gztlenr8TJ2LJs",
+    "https://chaosbrief.substack.com/",
+    "https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/",
+]
 
 NS = {
     "itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
@@ -153,8 +165,10 @@ def parse_episodes(xml_bytes):
     return episodes
 
 
-def base_head(title, description, canonical_path, extra_schema=""):
+def base_head(title, description, canonical_path, extra_schema="", og_image="", noindex=False):
     canonical = f"{SITE_URL}{canonical_path}"
+    og_image = og_image or DEFAULT_OG_IMAGE
+    robots = '<meta name="robots" content="noindex, follow">\n' if noindex else ""
     return f"""<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{html.escape(title)}</title>
@@ -167,7 +181,9 @@ def base_head(title, description, canonical_path, extra_schema=""):
 <meta property="og:site_name" content="{SITE_NAME}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@cybercrimejunky">
-<link rel="preconnect" href="https://fonts.googleapis.com">
+<meta property="og:image" content="{html.escape(og_image)}">
+<meta name="twitter:image" content="{html.escape(og_image)}">
+{robots}<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800&family=Permanent+Marker&display=swap">
 <link rel="stylesheet" href="/style.css">
@@ -223,7 +239,7 @@ def footer():
       </div>
       <div class="footer-col">
         <h4>Follow Our Podcast</h4>
-        <a href="https://www.youtube.com/@CyberCrimeJunkiesPodcast">YouTube</a>
+        <a href="https://www.youtube.com/@cybercrimejunkies">YouTube</a>
         <a href="https://www.buzzsprout.com/2014652">Listen Everywhere</a>
       </div>
     </div>
@@ -231,22 +247,126 @@ def footer():
     </footer>"""
 
 
+def iso_duration(raw):
+    raw = (raw or "").strip()
+    if not raw:
+        return ""
+    try:
+        parts = [int(p) for p in raw.split(":")]
+    except ValueError:
+        return ""
+    secs = 0
+    for p in parts:
+        secs = secs * 60 + p
+    h, rem = divmod(secs, 3600)
+    m, sec = divmod(rem, 60)
+    return f"PT{h}H{m}M{sec}S" if h else f"PT{m}M{sec}S"
+
+
+def ld_script(data):
+    return '<script type="application/ld+json">\n' + json.dumps(data, ensure_ascii=False, indent=2).replace("</", "<\\/") + "\n</script>"
+
+
 def episode_schema(ep):
-    parts = [f'"name": {json_str(ep["title"])}', f'"description": {json_str(ep["summary_plain"][:300])}']
+    data = {
+        "@context": "https://schema.org",
+        "@type": "PodcastEpisode",
+        "name": ep["title"],
+        "url": f"{SITE_URL}/episode/{ep['slug']}",
+        "description": ep["summary_plain"][:300],
+        "partOfSeries": {"@type": "PodcastSeries", "name": SITE_NAME, "url": SITE_URL, "webFeed": RSS_URL},
+        "author": {"@type": "Person", "name": "David Dean Mauro"},
+    }
     if ep["pub_date_iso"]:
-        parts.append(f'"datePublished": {json_str(ep["pub_date_iso"])}')
-    if ep["duration"]:
-        parts.append(f'"duration": {json_str("PT" + ep["duration"] + "S")}')
+        data["datePublished"] = ep["pub_date_iso"]
+    dur = iso_duration(ep["duration"])
+    if dur:
+        data["timeRequired"] = dur
+    if ep["image"]:
+        data["image"] = ep["image"]
     if ep["audio_url"]:
-        parts.append(f'"associatedMedia": {{"@type": "MediaObject", "contentUrl": {json_str(ep["audio_url"])}}}')
-    return f"""<script type="application/ld+json">
-{{
-  "@context": "https://schema.org",
-  "@type": "PodcastEpisode",
-  {", ".join(parts)},
-  "partOfSeries": {{"@type": "PodcastSeries", "name": "Cyber Crime Junkies", "url": "{SITE_URL}"}}
-}}
-</script>"""
+        data["associatedMedia"] = {"@type": "MediaObject", "contentUrl": ep["audio_url"]}
+        if dur:
+            data["associatedMedia"]["duration"] = dur
+    if ep["season"]:
+        data["partOfSeason"] = {"@type": "PodcastSeason", "seasonNumber": ep["season"]}
+    if ep["episode_num"]:
+        data["episodeNumber"] = ep["episode_num"]
+    return ld_script(data)
+
+
+def site_schema():
+    person = {
+        "@type": "Person",
+        "@id": f"{SITE_URL}/#host",
+        "name": "David Dean Mauro",
+        "alternateName": "Dean Mauro",
+        "jobTitle": "Host, Cyber Crime Junkies",
+        "description": "Host of Cyber Crime Junkies, author of the Moving Target Trilogy, former trial lawyer, FBI InfraGard member, and VP of Strategic Growth at NetGain Technologies.",
+        "url": f"{SITE_URL}/about",
+        "image": f"{SITE_URL}/images/dm-hero-office.jpg",
+    }
+    org = {
+        "@type": "Organization",
+        "@id": f"{SITE_URL}/#org",
+        "name": SITE_NAME,
+        "url": SITE_URL,
+        "logo": f"{SITE_URL}/images/logo.png",
+        "email": "cybercrimejunkies@gmail.com",
+        "founder": {"@id": f"{SITE_URL}/#host"},
+        "sameAs": SAME_AS,
+    }
+    series = {
+        "@type": "PodcastSeries",
+        "@id": f"{SITE_URL}/#podcast",
+        "name": SITE_NAME,
+        "url": SITE_URL,
+        "description": SHOW_DESCRIPTION,
+        "webFeed": RSS_URL,
+        "author": {"@id": f"{SITE_URL}/#host"},
+        "publisher": {"@id": f"{SITE_URL}/#org"},
+        "sameAs": SAME_AS,
+    }
+    website = {
+        "@type": "WebSite",
+        "@id": f"{SITE_URL}/#website",
+        "name": SITE_NAME,
+        "url": SITE_URL,
+        "description": SHOW_DESCRIPTION,
+        "publisher": {"@id": f"{SITE_URL}/#org"},
+    }
+    return ld_script({"@context": "https://schema.org", "@graph": [website, org, person, series]})
+
+
+def books_schema():
+    books = [
+        ("Moving Target: The Art of Online Camouflage", 1),
+        ("Moving Target: The Obedient Machine", 2),
+        ("Moving Target: The Ghost and the Machine", 3),
+    ]
+    series = {
+        "@context": "https://schema.org",
+        "@type": "BookSeries",
+        "name": "Moving Target Trilogy",
+        "url": f"{SITE_URL}/book-series",
+        "author": {"@type": "Person", "name": "David Dean Mauro", "alternateName": "Dean Mauro"},
+        "hasPart": [{"@type": "Book", "name": n, "position": p, "author": {"@type": "Person", "name": "Dean Mauro"}} for n, p in books],
+    }
+    return ld_script(series)
+
+
+def about_schema():
+    return ld_script({
+        "@context": "https://schema.org",
+        "@type": "AboutPage",
+        "url": f"{SITE_URL}/about",
+        "name": "About Cyber Crime Junkies",
+        "description": SHOW_DESCRIPTION,
+        "mainEntity": {"@type": "Person", "name": "David Dean Mauro", "alternateName": "Dean Mauro", "url": f"{SITE_URL}/about"},
+    })
+
+
+PAGE_SCHEMA = {}
 
 
 def json_str(s):
@@ -281,7 +401,7 @@ def render_episode_page(ep):
     body = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-{base_head(title, desc, f"/episode/{ep['slug']}", episode_schema(ep))}
+{base_head(title, desc, f"/episode/{ep['slug']}", episode_schema(ep), og_image=ep["image"])}
 </head>
 <body>
 {nav()}
@@ -304,7 +424,7 @@ def render_episode_page(ep):
 
 def render_homepage(episodes):
     title = "Cyber Crime Junkies | True Crime Stories & AI Security Podcast"
-    desc = "True crime stories and expert interviews on cybersecurity and AI. Hosted by David Dean Mauro. New episodes and the Chaos Brief newsletter every week."
+    desc = "Real cybercrime stories, live cyber and AI training for leaders, and the Moving Target thriller trilogy. Hosted by David Dean Mauro. New episodes every week."
 
     cards = ""
     for ep in episodes[:3]:
@@ -314,16 +434,7 @@ def render_homepage(episodes):
   <p>{html.escape(truncate(ep['summary_plain'], 140))}</p>
 </a>"""
 
-    schema = f"""<script type="application/ld+json">
-{{
-  "@context": "https://schema.org",
-  "@type": "PodcastSeries",
-  "name": "Cyber Crime Junkies",
-  "url": "{SITE_URL}",
-  "description": {json_str(desc)},
-  "author": {{"@type": "Person", "name": "David Dean Mauro"}}
-}}
-</script>"""
+    schema = site_schema() + '\n<link rel="preload" as="image" href="/images/dm-hero-office.jpg">'
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -333,7 +444,7 @@ def render_homepage(episodes):
 <body>
 {nav()}
 <main class="homepage">
-  <section class="hero-full" role="img" aria-label="David Dean Mauro speaking, in a dark empty office">
+  <section class="hero-full">
     <div class="hero-inner">
       <h1 class="hero-headline">Cyber Crime Is <br class="m-br"><span class="swap"><del>Computer</del><ins>Organized</ins></span> Crime.<br>Learn How To <span class="hero-red">Stop</span> It.</h1>
       <p class="hero-sub">Real cybercrime stories, live training for leaders, and the thriller trilogy built from 400+ interviews. Hosted by David Dean Mauro.</p>
@@ -349,11 +460,14 @@ def render_homepage(episodes):
     </div>
     <a class="watch-youtube-link" href="https://youtu.be/sRQ9RHo9cyQ">Watch on YouTube</a>
   </section>
+  <div class="lanes-banner">
+    <h2 class="lanes-heading">Three Ways In. Pick Yours.</h2>
+  </div>
   <section class="lanes">
     <div class="lane-card">
-      <img src="/images/kylie-blazer.jpg" alt="Kylie Jaimeson, Executive Producer of Cyber Crime Junkies, at the studio microphone">
+      <a class="lane-top-btn" href="/speaking">Organizations &amp; Leaders</a>
+      <img loading="lazy" src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage to a full room of business leaders" class="lane-img-stage">
       <div class="lane-body">
-        <p class="lane-tag">For Organizations</p>
         <h2>Your Team Is the Target. Train Them First.</h2>
         <p>Live and virtual cyber and AI training built on real crimes. Your people act on it the same day.</p>
         <div class="lane-btns">
@@ -363,9 +477,9 @@ def render_homepage(episodes):
       </div>
     </div>
     <div class="lane-card">
-      <img src="/images/kylie-hoodie.jpg" alt="Kylie Jaimeson recording an episode of Cyber Crime Junkies">
+      <a class="lane-top-btn" href="/episodes">Podcast Listeners &amp; Viewers</a>
+      <img loading="lazy" src="/images/dean-closeup.jpg" alt="David Dean Mauro recording Cyber Crime Junkies at the studio microphone" class="lane-img-studio">
       <div class="lane-body">
-        <p class="lane-tag">Listen</p>
         <h2>400+ Interviews. Zero Jargon.</h2>
         <p>Federal agents, ransomware negotiators, and the people who got hit, in plain language.</p>
         <div class="lane-btns">
@@ -374,13 +488,14 @@ def render_homepage(episodes):
       </div>
     </div>
     <div class="lane-card">
-      <img src="/images/book3-cover.png" alt="Moving Target Book 3: The Ghost and the Machine cover" class="lane-img-book">
+      <a class="lane-top-btn" href="/book-series">Newsletter &amp; Books</a>
+      <img loading="lazy" src="/images/home-monitors.jpg" alt="Cyber Crime Junkies and all three Moving Target books on the studio monitor" class="lane-img-books">
       <div class="lane-body">
-        <p class="lane-tag">Read</p>
         <h2>Not Hacked. Selected.</h2>
-        <p>The Moving Target Trilogy. Book 3, The Ghost and the Machine, out now.</p>
+        <p>The Chaos Brief newsletter, and the Moving Target Trilogy. Book 3, The Ghost and the Machine, out now.</p>
         <div class="lane-btns">
           <a class="buy-now-btn" href="/book-series">Start With Book 1</a>
+          <a class="buy-now-btn lane-btn-alt" href="/chaos-brief-newsletter">Get the Chaos Brief</a>
         </div>
       </div>
     </div>
@@ -399,31 +514,31 @@ def render_homepage(episodes):
 
 
   <section class="home-studio-grid">
-    <img src="/images/home-hacking-hacker.jpg" alt="Cyber Crime Junkies studio shelf with Hacking the Hacker">
-    <img src="/images/home-monitors.jpg" alt="Cyber Crime Junkies studio multi-monitor setup">
-    <img src="/images/dm-rain.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies">
-    <img src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage to a live audience">
-    <img src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
-    <img src="/images/speaking-bctc-5.jpg" alt="David Dean Mauro addressing attendees at a live cyber and AI training">
+    <img loading="lazy" src="/images/home-hacking-hacker.jpg" alt="Cyber Crime Junkies studio shelf with Hacking the Hacker">
+    <img loading="lazy" src="/images/home-monitors.jpg" alt="Cyber Crime Junkies studio multi-monitor setup">
+    <img loading="lazy" src="/images/dm-rain.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies">
+    <img loading="lazy" src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage to a live audience">
+    <img loading="lazy" src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
+    <img loading="lazy" src="/images/speaking-bctc-5.jpg" alt="David Dean Mauro addressing attendees at a live cyber and AI training">
   </section>
   <section class="ep-strip">
-    <img src="/images/kylie-studio.jpg" alt="Kylie Jaimeson, Executive Producer of Cyber Crime Junkies">
+    <img loading="lazy" src="/images/kylie-studio.jpg" alt="Kylie Jaimeson, Executive Producer of Cyber Crime Junkies">
     <div>
       <h2>Kylie Jaimeson</h2>
       <p>Executive Producer, Cyber Crime Junkies</p>
     </div>
   </section>
   <section class="speaking-banner">
-  <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro speaking to a live audience">
+  <img loading="lazy" src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro speaking to a live audience">
   <div class="speaking-banner-overlay">
    <h2>We perform live in person and virtually turning true crime stories into entertaining education. Your employees can take action on the same day.</h2>
     <a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book David Dean to Speak</a>
   </div>
 </section>
 <section class="home-studio-row">
-  <img src="/images/speaking-new-2.jpg" alt="David Dean Mauro speaking at a live cybersecurity training">
-  <img src="/images/speaking-new-1.jpg" alt="David Dean Mauro presenting to business leaders">
-  <img src="/images/speaking-new-3.jpg" alt="Executives attending a Cyber Crime Junkies live training">
+  <img loading="lazy" src="/images/speaking-new-2.jpg" alt="David Dean Mauro speaking at a live cybersecurity training">
+  <img loading="lazy" src="/images/speaking-new-1.jpg" alt="David Dean Mauro presenting to business leaders">
+  <img loading="lazy" src="/images/speaking-new-3.jpg" alt="Executives attending a Cyber Crime Junkies live training">
 </section>
 <section class="chaos-strip">
   <h2>The Chaos Brief</h2>
@@ -480,7 +595,7 @@ def render_episodes_index(episodes):
 {nav()}
 <main class="episodes-index">
   <section class="episodes-hero">
-    <img src="/images/dean-studio.jpg" alt="Dean Mauro recording Cyber Crime Junkies in studio" class="hero-img">
+    <img loading="lazy" src="/images/dean-studio.jpg" alt="Dean Mauro recording Cyber Crime Junkies in studio" class="hero-img">
     <div class="episodes-hero-text">
       <h1>All Episodes</h1>
       <p>True crime stories, cybersecurity, and AI &mdash; organized by topic below, or browse everything newest first.</p>
@@ -489,7 +604,7 @@ def render_episodes_index(episodes):
   </section>
 
   <section class="hack-or-hype-feature">
-    <img src="/images/hack-or-hype.png" alt="Hack or Hype segment on Cyber Crime Junkies">
+    <img loading="lazy" src="/images/hack-or-hype.png" alt="Hack or Hype segment on Cyber Crime Junkies">
     <div>
       <h2>Segment: Hack or Hype</h2>
       <p>A recurring bit where guests call out real threats versus overhyped headlines &mdash; watch for it across recent episodes.</p>
@@ -499,11 +614,11 @@ def render_episodes_index(episodes):
   {hub_sections}
 
   <section class="team-strip">
-    <img src="/images/team-graphic.png" alt="Cyber Crime Junkies team: Dean Mauro, Kylie Jaimeson, Dr. Sergio Sanchez, Mike Acerra" class="team-graphic-img">
+    <img loading="lazy" src="/images/team-graphic.png" alt="Cyber Crime Junkies team: Dean Mauro, Kylie Jaimeson, Dr. Sergio Sanchez, Mike Acerra" class="team-graphic-img">
   </section>
 
   <section class="behind-scenes">
-    <img src="/images/riverside-session.png" alt="Recording a Cyber Crime Junkies interview">
+    <img loading="lazy" src="/images/riverside-session.png" alt="Recording a Cyber Crime Junkies interview">
     <p class="hub-desc">Behind the scenes recording an episode.</p>
   </section>
 
@@ -521,7 +636,7 @@ def render_static_page(slug, title_tag, desc, h1, content_html):
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-{base_head(title_tag, desc, f"/{slug}" if slug else "/")}
+{base_head(title_tag, desc, f"/{slug}" if slug else "/", PAGE_SCHEMA.get(slug, ""))}
 </head>
 <body>
 {nav()}
@@ -535,32 +650,54 @@ def render_static_page(slug, title_tag, desc, h1, content_html):
 
 
 ABOUT_CONTENT = """
+<img loading="lazy" src="/images/about-studio-wide.jpg" alt="The Cyber Crime Junkies studio: bookshelves, the Moving Target trilogy, and an FBI cap" class="about-wide-img">
+
+<p class="about-lead">Ever notice the people hit hardest by cybercrime are rarely careless?</p>
+<p>They are busy. They are trusting. They never thought they were worth the trouble.</p>
+<p>That is the whole business model.</p>
+<p>Cybercrime is organized crime. It runs on quotas, shift schedules and affiliate programs, and it picks targets the way any business picks customers. Easiest first.</p>
+<p><strong>Cyber Crime Junkies</strong> is a true crime podcast and YouTube show about cybercrime and AI security, hosted by David Dean Mauro. We explain how the crimes actually happen, in plain language, so you stop being the easy one.</p>
+<p>There are three ways in.</p>
+
+<h2>Organizations &amp; Leaders</h2>
+<p>Live and virtual cyber and AI awareness training for small and mid-sized businesses and healthcare teams.</p>
+<p>Every session is built on real crimes, told as stories. Your people walk out knowing what to do that same day.</p>
+<p class="lane-btns"><a class="buy-now-btn" href="/speaking">Find Out More</a> <a class="buy-now-btn lane-btn-alt" href="mailto:cybercrimejunkies@gmail.com">Contact David Dean Today</a></p>
+
+<h2>Podcast Listeners &amp; Viewers</h2>
+<p>9 seasons. 400+ interviews.</p>
+<p>Federal agents, ransomware negotiators, and the people who just found out, in plain language. New episodes every week on YouTube and wherever you get your podcasts.</p>
+<p class="lane-btns"><a class="buy-now-btn" href="/episodes">Start Listening</a></p>
+
+<h2>Newsletter &amp; Books</h2>
+<p>The Chaos Brief lands every week on LinkedIn and Substack. Join over 10,000 leaders who subscribe.</p>
+<p>The Moving Target Trilogy turns four years and 400+ interviews into three nonfiction cybercrime thrillers. Book 3, The Ghost and the Machine, is out now.</p>
+<p class="lane-btns"><a class="buy-now-btn" href="/book-series">Start With Book 1</a> <a class="buy-now-btn lane-btn-alt" href="/chaos-brief-newsletter">Get the Chaos Brief</a></p>
+
+<h2>Who is behind it</h2>
 <div class="about-hero">
-  <img src="/images/dean-noir.jpg" alt="Dean Mauro, author and host" class="about-hero-img">
+  <img loading="lazy" src="/images/dean-noir.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies" class="about-hero-img">
   <div>
-    <p>Cyber Crime Junkies is a true crime podcast about cybersecurity and AI &mdash; real breach stories, hacker interviews,
-    and plain-language explanations of the threats facing small and mid-sized businesses.</p>
-    <p>Hosted by <strong>Dean Mauro</strong> &mdash; VP of Growth at NetGain Technologies, a Top 250 Managed Security Service
-    Provider (SOC 2 Type II certified, operating since 1984), FBI InfraGard member, former trial lawyer, and author of the
-    Moving Target Trilogy.</p>
+    <p>David Dean Mauro spent decades as a trial lawyer. Today he is VP of Strategic Growth at NetGain Technologies, a Top 250 managed security service provider (SOC 2 Type II certified, operating since 1984).</p>
+    <p>He is a member of FBI InfraGard, a partnership between the FBI and the private sector to protect critical infrastructure, and the author of the Moving Target Trilogy.</p>
+    <p>Kylie Jaimeson is the show's Executive Producer. Dr. Sergio Sanchez and Mike Acerra round out the team.</p>
   </div>
 </div>
-
-<h2>The team</h2>
-<img src="/images/team-graphic.png" alt="Cyber Crime Junkies team: Dean Mauro, Kylie Jaimeson, Dr. Sergio Sanchez, Mike Acerra" class="about-wide-img">
+<img loading="lazy" src="/images/team-graphic.png" alt="Cyber Crime Junkies team: Dean Mauro, Kylie Jaimeson, Dr. Sergio Sanchez, Mike Acerra" class="about-wide-img">
 
 <h2>On the road</h2>
-<img src="/images/dean-speaking.png" alt="Dean Mauro speaking at industry conferences" class="about-wide-img">
-<p>Dean speaks regularly at industry conferences and community workshops on cybersecurity, AI governance, and business risk.</p>
+<img loading="lazy" src="/images/dean-speaking.png" alt="Dean Mauro speaking at industry conferences" class="about-wide-img">
+<p>Dean speaks at industry conferences and community workshops on cybersecurity, AI governance, and business risk.</p>
 
 <div class="about-shelf-row">
-  <img src="/images/about-shelf-1.jpg" alt="Cyber Crime Junkies studio shelf">
-  <img src="/images/about-shelf-2.jpg" alt="Cyber Crime Junkies studio shelf, FDNY and NYPD">
+  <img loading="lazy" src="/images/about-shelf-1.jpg" alt="Cyber Crime Junkies studio shelf">
+  <img loading="lazy" src="/images/about-shelf-2.jpg" alt="Cyber Crime Junkies studio shelf, FDNY and NYPD">
 </div>
 
-<h2>Editorial note on names</h2>
-<p>The host publishes as <strong>Dean Mauro</strong>. "David Dean Mauro" appears as a legal-name variant on some
-podcast directories and older episode credits.</p>
+<h2>A note on names</h2>
+<p>The host publishes as <strong>Dean Mauro</strong>. "David Dean Mauro" appears as a legal-name variant on some podcast directories and older episode credits.</p>
+
+<p class="about-close">Be a moving target.</p>
 """
 
 RESOURCES_CONTENT = """
@@ -568,7 +705,7 @@ RESOURCES_CONTENT = """
 <div class="resource-grid">
   <div class="resource-card">
     <h3>AI Prompt Guide</h3>
-    <img src="/images/resource-ai-prompt-guide.jpg" alt="AI Prompt Guide cover" class="book-cover-img">
+    <img loading="lazy" src="/images/resource-ai-prompt-guide.jpg" alt="AI Prompt Guide cover" class="book-cover-img">
         <p>Sanitize the prompt before you type it. Get the output you wanted the first time. Force the model to flag
     what it invented. Four parts, an AI privacy checklist, and the prompts worth saving once and reusing forever.</p>
     <form name="ai-prompt-guide" method="POST" data-netlify="true" action="/resources/ai-prompt-guide-thank-you/">
@@ -578,7 +715,7 @@ RESOURCES_CONTENT = """
     </form>
   </div>
   <div class="resource-card">
-  <img src="/images/resource-ai-governance-guide.jpg" alt="AI Governance and Personal Set Up Guide cover" class="book-cover-img">
+  <img loading="lazy" src="/images/resource-ai-governance-guide.jpg" alt="AI Governance and Personal Set Up Guide cover" class="book-cover-img">
     <h3>AI Governance &amp; Personal Set Up Guide</h3>
     <p>What to do and not do with AI at work, how to set up AI to teach you anything, the most common governance gaps,
     and a full governance checklist for leadership teams.</p>
@@ -589,7 +726,7 @@ RESOURCES_CONTENT = """
     </form>
   </div>
   <div class="resource-card">
-  <img src="/images/resource-camouflage-checklist.jpg" alt="Moving Target Camouflage Checklist cover" class="book-cover-img">
+  <img loading="lazy" src="/images/resource-camouflage-checklist.jpg" alt="Moving Target Camouflage Checklist cover" class="book-cover-img">
     <h3>Moving Target Camouflage Checklist</h3>
     <p>The full checklist from the book on one page &mdash; password managers, LinkedIn exposure, people-search
     removal, verifying vendors, and the family code word. Ten actions, no jargon.</p>
@@ -600,7 +737,7 @@ RESOURCES_CONTENT = """
     </form>
   </div>
   <div class="resource-card">
-  <img src="/images/resource-ai-starter-kit.jpg" alt="AI Starter Kit cover" class="book-cover-img">
+  <img loading="lazy" src="/images/resource-ai-starter-kit.jpg" alt="AI Starter Kit cover" class="book-cover-img">
     <h3>AI Starter Kit</h3>
     <p>For anyone starting out with AI. Set it up safely so your work data does not become training data, personalize
     it so every output sounds like you wrote it, and get it to teach you anything one step at a time.</p>
@@ -642,15 +779,15 @@ THANK_YOU_PAGES = {
 }
 
 BOOK_SERIES_CONTENT = """
-<img src="/images/book-collage.png" alt="Moving Target Trilogy by Dean Mauro, #1 Amazon Hot New Release" class="book-hero-img">
+<img loading="lazy" src="/images/book-collage.png" alt="Moving Target Trilogy by Dean Mauro, #1 Amazon Hot New Release" class="book-hero-img">
 <p>The Moving Target Trilogy &mdash; nonfiction cybercrime thrillers based on 400+ interviews over four years.</p>
 <div class="book-shelf-row">
-  <img src="/images/book-shelf-wide.jpg" alt="Moving Target books on studio shelf">
-  <img src="/images/book-shelf-closeup.jpg" alt="Moving Target: Art of Online Camouflage and The Obedient Machine">
+  <img loading="lazy" src="/images/book-shelf-wide.jpg" alt="Moving Target books on studio shelf">
+  <img loading="lazy" src="/images/book-shelf-closeup.jpg" alt="Moving Target: Art of Online Camouflage and The Obedient Machine">
 </div>
 <div class="book-grid">
   <div class="book-card">
-    <img src="/images/book1-cover.png" alt="Book 1: Art of Online Camouflage cover" class="book-cover-img">
+    <img loading="lazy" src="/images/book1-cover.png" alt="Book 1: Art of Online Camouflage cover" class="book-cover-img">
     <h3>Book 1: Art of Online Camouflage</h3>
     <p>Stevie Parker did everything right. Good career. Growing company. A private equity deal on the horizon. She was smart, capable, and completely unaware she had already been selected. Not hacked. Selected.</p>
     <p>Available in paperback, hardcover, Kindle, and audiobook.</p>
@@ -658,7 +795,7 @@ BOOK_SERIES_CONTENT = """
     <a class="buy-now-btn" href="https://shop.ingramspark.com/b/084?params=d0YQ1pYtxeBRmSQLHLb9uT4aOliPrEuDSfOjQgpXQP9">Exclusive Copy</a>
   </div>
   <div class="book-card">
-    <img src="/images/book2-cover.png" alt="Book 2: Obedient Machine cover" class="book-cover-img">
+    <img loading="lazy" src="/images/book2-cover.png" alt="Book 2: Obedient Machine cover" class="book-cover-img">
     <h3>Book 2: Obedient Machine</h3>
     <p>Stevie survived Book One. She got skeptical. She stopped being the easiest target on the street. Then her company adopted AI and had to learn a completely different lesson. AI is not evil. It is obedient. It does exactly what you tell it to do &mdash; and exactly what you fail to tell it not to do.</p>
     <p>Available in paperback, hardcover, Kindle, and audiobook.</p>
@@ -666,7 +803,7 @@ BOOK_SERIES_CONTENT = """
     <a class="buy-now-btn" href="https://shop.ingramspark.com/b/084?params=S3F9zWWMC2y2eYiTmUGP91Owy9AUVG4zbLa6NwuX3cl">Exclusive Copy</a>
   </div>
   <div class="book-card">
-    <img src="/images/book3-cover.png" alt="Book 3: The Ghost and the Machine cover" class="book-cover-img">
+    <img loading="lazy" src="/images/book3-cover.png" alt="Book 3: The Ghost and the Machine cover" class="book-cover-img">
     <h3>Book 3: The Ghost and the Machine</h3>
     <p>Stevie already knows she is a target. This book is about what she does about it. The most dangerous thing you can be right now is findable.</p>
     <p>Available now in paperback, hardcover, Kindle, and audiobook.</p>
@@ -681,10 +818,9 @@ CONTACT_CONTENT = """
 <p>Email: <a href="mailto:cybercrimejunkies@gmail.com">cybercrimejunkies@gmail.com</a></p>
 """
 SPEAKING_CONTENT = """
-<img src="/images/speaking-hero.jpg" alt="David Dean Mauro speaking on stage" class="book-hero-img">
-<h2>Public Speaking</h2>
+<img loading="lazy" src="/images/speaking-hero.jpg" alt="David Dean Mauro speaking on stage" class="book-hero-img">
 <div class="about-hero">
-  <img src="/images/speaking-gallery-2.jpg" alt="David Dean Mauro speaking at a leadership summit" class="speaking-lead-img">
+  <img loading="lazy" src="/images/speaking-gallery-2.jpg" alt="David Dean Mauro speaking at a leadership summit" class="speaking-lead-img">
   <div>
     <p>Before Cyber Crime Junkies, David Dean Mauro spent decades as a trial lawyer. He hosts the podcast, sits on FBI InfraGard, serves as VP of Strategic Growth at NetGain Technologies, and wrote the Moving Target trilogy. He has delivered live cyber and AI awareness trainings to organizations across North America and sat across from federal agents, ransomware negotiators, and people who just found out.</p>
     <p>His talks bring courtroom instinct into the boardroom. No jargon. No fear-mongering. Just the real mechanics of how criminals pick their targets, and how to stop being one.</p>
@@ -700,70 +836,72 @@ SPEAKING_CONTENT = """
   <li>Move. They Miss. &mdash; building a moving-target security culture for SMB leaders</li>
 </ul>
 <div class="about-shelf-row">
-  <img src="/images/speaking-gallery-1.jpg" alt="David Dean Mauro speaking at an industry conference">
+  <img loading="lazy" src="/images/speaking-gallery-1.jpg" alt="David Dean Mauro speaking at an industry conference">
   </div>
 <div class="about-shelf-row">
-  <img src="/images/speaking-new-1.jpg" alt="David Dean Mauro presenting to a live audience">
-  <img src="/images/speaking-new-2.jpg" alt="David Dean Mauro speaking at the Graphic Media Alliance Encore event">
+  <img loading="lazy" src="/images/speaking-new-1.jpg" alt="David Dean Mauro presenting to a live audience">
+  <img loading="lazy" src="/images/speaking-new-2.jpg" alt="David Dean Mauro speaking at the Graphic Media Alliance Encore event">
 </div>
 <div class="about-shelf-row">
-  <img src="/images/speaking-new-3.jpg" alt="Executives attending a Cyber Crime Junkies live training session">
-  <img src="/images/speaking-new-4.jpg" alt="Attendee photographing a slide during a live cyber training">
+  <img loading="lazy" src="/images/speaking-new-3.jpg" alt="Executives attending a Cyber Crime Junkies live training session">
+  <img loading="lazy" src="/images/speaking-new-4.jpg" alt="Attendee photographing a slide during a live cyber training">
 </div>
 <div class="about-shelf-row">
-  <img src="/images/speaking-new-5.jpg" alt="Business leaders listening during a live cybersecurity training">
+  <img loading="lazy" src="/images/speaking-new-5.jpg" alt="Business leaders listening during a live cybersecurity training">
 </div>
 <div class="about-shelf-row">
-  <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro on stage before a large audience">
+  <img loading="lazy" src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro on stage before a large audience">
 </div>
 <div class="about-shelf-row">
-  <img src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage at Bluegrass Community and Technical College">
-  <img src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
+  <img loading="lazy" src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage at Bluegrass Community and Technical College">
+  <img loading="lazy" src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
 </div>
 <div class="about-shelf-row">
-  <img src="/images/speaking-bctc-2.jpg" alt="David Dean Mauro at the podium during an AI awareness keynote">
-  <img src="/images/speaking-bctc-3.jpg" alt="David Dean Mauro presenting on AI risk to business leaders">
+  <img loading="lazy" src="/images/speaking-bctc-2.jpg" alt="David Dean Mauro at the podium during an AI awareness keynote">
+  <img loading="lazy" src="/images/speaking-bctc-3.jpg" alt="David Dean Mauro presenting on AI risk to business leaders">
 </div>
 <div class="about-shelf-row">
-  <img src="/images/speaking-bctc-5.jpg" alt="David Dean Mauro addressing attendees at a live cyber and AI training">
-</div><img src="/images/speaking-portrait.jpg" alt="David Dean Mauro, author and host" class="about-hero-img">
+  <img loading="lazy" src="/images/speaking-bctc-5.jpg" alt="David Dean Mauro addressing attendees at a live cyber and AI training">
+</div><img loading="lazy" src="/images/speaking-portrait.jpg" alt="David Dean Mauro, author and host" class="about-hero-img">
 <p><a class="buy-now-btn" href="mailto:DMauro@NetGainIT.com">Book David Dean to Speak</a></p>
 """
 NEWSLETTER_CONTENT = """
+<img loading="lazy" src="/images/chaos-brief-night.jpg" alt="A car idling on a rain-soaked city street at night" class="book-hero-img">
+<p><strong>Join over 10,000 leaders who subscribe.</strong> Weekly cybercrime and AI stories, straight to your inbox.</p>
 <p>Subscribe on <a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/">LinkedIn</a> or <a href="https://chaosbrief.substack.com/">Substack</a>.</p>
 <div class="resource-grid">
   <div class="resource-card">
-    <img src="/images/newsletter-6.png" alt="AI Goes Rogue cover" class="book-cover-img">
+    <img loading="lazy" src="/images/newsletter-6.png" alt="AI Goes Rogue cover" class="book-cover-img">
     <p class="episode-meta">August 05, 2026</p>
     <h3><a href="https://www.linkedin.com/pulse/ai-agents-dont-need-evil-just-access-without-governance-mauro-jbhve/" target="_blank" rel="noopener">AI Agents Don't Need to Be Evil. Just Access Without Governance.</a></h3>
     <p>An AI agent does exactly what you connect it to. Nobody told it what not to touch.</p>
   </div>
   <div class="resource-card">
-    <img src="/images/newsletter-1.png" alt="OSINT Unmasked cover" class="book-cover-img">
+    <img loading="lazy" src="/images/newsletter-1.png" alt="OSINT Unmasked cover" class="book-cover-img">
     <p class="episode-meta">July 20, 2026</p>
     <h3><a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/" target="_blank" rel="noopener">OSINT Unmasked: The Ethical Hacker Who Traced an Anonymous Cybercriminal in One Hour</a></h3>
     <p>How ethical hacker Mishaal Khan traced an anonymous cybercriminal in one hour using only public data, no malware, no dark web.</p>
   </div>
   <div class="resource-card">
-    <img src="/images/newsletter-2.png" alt="EY Data Breach 2026 cover" class="book-cover-img">
+    <img loading="lazy" src="/images/newsletter-2.png" alt="EY Data Breach 2026 cover" class="book-cover-img">
     <p class="episode-meta">July 19, 2026</p>
     <h3><a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/" target="_blank" rel="noopener">EY Data Breach 2026: What the Filings Confirm, What They Hide, and What To Do Next</a></h3>
     <p>What the EY breach filings confirm, what they hide, and what leaders should do next, including passport scans, tax filings, and a missecured support-ticket platform.</p>
   </div>
   <div class="resource-card">
-    <img src="/images/newsletter-3.png" alt="CMMC Just Hit Pause cover" class="book-cover-img">
+    <img loading="lazy" src="/images/newsletter-3.png" alt="CMMC Just Hit Pause cover" class="book-cover-img">
     <p class="episode-meta">July 14, 2026</p>
     <h3><a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/" target="_blank" rel="noopener">CMMC Just Hit Pause. Your Primes Didn't Get the Memo.</a></h3>
     <p>What changed on July 13, what stayed the same, and why the "we can relax" crowd faces an expensive wake-up call.</p>
   </div>
   <div class="resource-card">
-    <img src="/images/newsletter-4.png" alt="The Data Breach Always Ends the Same Way cover" class="book-cover-img">
+    <img loading="lazy" src="/images/newsletter-4.png" alt="The Data Breach Always Ends the Same Way cover" class="book-cover-img">
     <p class="episode-meta">July 13, 2026</p>
     <h3><a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/" target="_blank" rel="noopener">The Data Breach Always Ends the Same Way. Until It Doesn't.</a></h3>
     <p>How data-breach stories usually end, and why this one breaks the mold in The Moving Target Trilogy.</p>
   </div>
   <div class="resource-card">
-    <img src="/images/newsletter-5.png" alt="How One Phone Call Stopped a Million-Dollar Heist cover" class="book-cover-img">
+    <img loading="lazy" src="/images/newsletter-5.png" alt="How One Phone Call Stopped a Million-Dollar Heist cover" class="book-cover-img">
     <p class="episode-meta">July 08, 2026</p>
     <h3><a href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/" target="_blank" rel="noopener">How One Phone Call Stopped a Million-Dollar Heist</a></h3>
     <p>The attack was already inside. Thirty seconds of training bought everything. Why the smartest people in the room are the ones who get fooled.</p>
@@ -817,12 +955,36 @@ GUEST_POLICY_CONTENT = """
 def render_sitemap(episodes):
     urls = ["", "/about", "/book-series", "/resources", "/episodes", "/contact", "/chaos-brief-newsletter", "/privacy-policy", "/guest-policy", "/speaking"]
     entries = "\n".join(f"  <url><loc>{SITE_URL}{u}</loc></url>" for u in urls)
-    ep_entries = "\n".join(f"  <url><loc>{SITE_URL}/episode/{e['slug']}</loc></url>" for e in episodes)
+    ep_entries = "\n".join(
+        f"  <url><loc>{SITE_URL}/episode/{e['slug']}</loc>" + (f"<lastmod>{e['pub_date'].strftime('%Y-%m-%d')}</lastmod>" if e['pub_date'] else "") + "</url>"
+        for e in episodes)
     return f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 {entries}
 {ep_entries}
 </urlset>"""
+
+
+def render_llms_txt(episodes):
+    lines = [
+        "# Cyber Crime Junkies",
+        "",
+        f"> {SHOW_DESCRIPTION}",
+        "",
+        "## Three ways in",
+        f"- [Organizations and leaders: live cyber and AI training]({SITE_URL}/speaking)",
+        f"- [Podcast listeners and viewers: all episodes by topic]({SITE_URL}/episodes)",
+        f"- [Newsletter and books: the Moving Target Trilogy]({SITE_URL}/book-series)",
+        f"- [The Chaos Brief newsletter]({SITE_URL}/chaos-brief-newsletter)",
+        f"- [Free guides]({SITE_URL}/resources)",
+        f"- [About the show and host]({SITE_URL}/about)",
+        "",
+        "## Latest episodes",
+    ]
+    for e in episodes[:20]:
+        lines.append(f"- [{e['title']}]({SITE_URL}/episode/{e['slug']}): {truncate(e['summary_plain'], 160)}")
+    lines += ["", f"Contact: cybercrimejunkies@gmail.com", f"Podcast feed: {RSS_URL}", ""]
+    return "\n".join(lines)
 
 
 ROBOTS = f"""User-agent: *
@@ -927,7 +1089,9 @@ h1, h2 { font-family:'Anton', Impact, 'Haettenschweiler', 'Arial Narrow Bold', s
 .lanes { display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin:8px 0 40px; }
 .lane-card { background:#16233a; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
 .lane-card img { width:100%; height:220px; object-fit:cover; object-position:center 25%; display:block; }
-.lane-card img.lane-img-book { object-fit:contain; background:#0d1420; padding:12px; }
+.lane-card img.lane-img-stage { object-position:center 45%; }
+.lane-card img.lane-img-studio { object-position:center 30%; }
+.lane-card img.lane-img-books { object-position:center center; }
 .lane-body { padding:18px; display:flex; flex-direction:column; flex:1; }
 .lane-body .lane-tag { color:var(--red-bright); text-transform:uppercase; letter-spacing:1px; font-size:0.8rem; font-weight:bold; margin:0 0 6px; }
 .lane-body h2 { font-size:1.5rem; margin:0 0 10px; }
@@ -957,6 +1121,13 @@ h1, h2 { font-family:'Anton', Impact, 'Haettenschweiler', 'Arial Narrow Bold', s
 @media (max-width:700px) { .hero-full { height:auto; display:block; padding:28px 0 330px; background-image:linear-gradient(180deg, var(--bg) 0%, var(--bg) 42%, rgba(13,20,32,0) 62%), url('/images/dm-hero-office.jpg'); background-size:100% 100%, auto 380px; background-position:0 0, 78% 100%; } .hero-headline { white-space:normal; font-size:28px; padding-top:0; } .hero-headline .m-br { display:inline; } .hero-headline .swap { margin-top:1.1em; } .hero-inner { padding:0 20px; } .hero-sub { font-size:15px; } }
 .featured-video { margin:8px auto 40px; max-width:860px; text-align:center; }
 .featured-video .video-embed { max-width:860px; padding-bottom:56.25%; margin:0 auto; }
+.lanes-banner { position:relative; left:50%; margin-left:-50vw; width:100vw; height:clamp(260px, 30vw, 460px); margin-top:8px; margin-bottom:28px; background:#0d1420 url('/images/lanes-tollbooth.jpg') center 47.5% / cover no-repeat; }
+.lanes-heading { position:absolute; left:50%; top:47.5%; transform:translate(-50%, -50%); margin:0; text-align:center; color:#fff; white-space:nowrap; font-size:clamp(20px, 4.2vw, 64px); letter-spacing:1px; }
+.lane-top-btn { display:block; background:var(--red); color:#fff; text-align:center; font-family:'Anton', Impact, 'Arial Narrow Bold', sans-serif; font-size:1.45rem; letter-spacing:1px; text-transform:uppercase; line-height:1.2; padding:18px 12px; }
+.lane-top-btn:hover { background:var(--red-dark); text-decoration:none; }
+.about-lead { font-size:1.35rem; color:#fff; font-weight:bold; }
+.about-close { font-family:'Anton', Impact, sans-serif; font-size:1.8rem; text-transform:uppercase; color:var(--red-bright); margin-top:32px; }
+.static-page .lane-btns { display:flex; gap:10px; flex-wrap:wrap; }
 @media (max-width:800px) { .lanes { grid-template-columns:1fr; } .nav { gap:14px; } }"""
 
 
@@ -981,7 +1152,7 @@ def render_thank_you_page(slug, info):
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-{base_head(info['title'], f"Download your {info['label']}.", f"/resources/{slug}")}
+{base_head(info['title'], f"Download your {info['label']}.", f"/resources/{slug}", noindex=True)}
 </head>
 <body>
 {nav()}
@@ -998,6 +1169,7 @@ def render_thank_you_page(slug, info):
 def main():
     os.makedirs(f"{OUT_DIR}/episode", exist_ok=True)
     copy_images()
+    PAGE_SCHEMA.update({"about": about_schema(), "book-series": books_schema()})
 
     print("Fetching RSS feed...")
     xml_bytes = fetch_feed()
@@ -1026,7 +1198,7 @@ def main():
     os.makedirs(f"{OUT_DIR}/about", exist_ok=True)
     with open(f"{OUT_DIR}/about/index.html", "w", encoding="utf-8") as f:
         f.write(render_static_page("about", "About | Cyber Crime Junkies",
-                                    "Host Dean Mauro and the story behind Cyber Crime Junkies.",
+                                    "What Cyber Crime Junkies is, who it serves, and the three ways in: training for leaders, the podcast, and the newsletter and books.",
                                     "About Cyber Crime Junkies", ABOUT_CONTENT))
 
     os.makedirs(f"{OUT_DIR}/resources", exist_ok=True)
@@ -1049,12 +1221,12 @@ def main():
     os.makedirs(f"{OUT_DIR}/contact", exist_ok=True)
     with open(f"{OUT_DIR}/contact/index.html", "w", encoding="utf-8") as f:
         f.write(render_static_page("contact", "Contact | Cyber Crime Junkies",
-                                    "Get in touch about workshops, speaking, or the show.",
+                                    "Contact Cyber Crime Junkies about live cyber and AI training, keynotes, podcast guest spots, or press. Email cybercrimejunkies@gmail.com.",
                                     "Contact Us", CONTACT_CONTENT))
     os.makedirs(f"{OUT_DIR}/privacy-policy", exist_ok=True)
     with open(f"{OUT_DIR}/privacy-policy/index.html", "w", encoding="utf-8") as f:
         f.write(render_static_page("privacy-policy", "Privacy Policy | Cyber Crime Junkies",
-                                     "Privacy Policy for Cyber Crime Junkies and cybercrimejunkies.com.",
+                                     "How Cyber Crime Junkies and cybercrimejunkies.com collect, use, and protect your information, including forms, analytics, and cookies.",
                                      "Privacy Policy", PRIVACY_CONTENT))
 
     os.makedirs(f"{OUT_DIR}/guest-policy", exist_ok=True)
@@ -1075,6 +1247,9 @@ def main():
 
     with open(f"{OUT_DIR}/sitemap.xml", "w", encoding="utf-8") as f:
         f.write(render_sitemap(episodes))
+
+    with open(f"{OUT_DIR}/llms.txt", "w", encoding="utf-8") as f:
+        f.write(render_llms_txt(episodes))
 
     with open(f"{OUT_DIR}/robots.txt", "w", encoding="utf-8") as f:
         f.write(ROBOTS)
