@@ -169,7 +169,7 @@ def base_head(title, description, canonical_path, extra_schema=""):
 <meta name="twitter:site" content="@cybercrimejunky">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@800&family=Permanent+Marker&display=swap">
 <link rel="stylesheet" href="/style.css">
 {extra_schema}"""
 
@@ -179,15 +179,25 @@ def nav():
   <div class="banner"><a href="/contact">Complimentary Cyber Awareness &amp; AI Workshops Now Available &mdash; Reach Out Today</a></div>
   <nav class="nav">
     <a class="brand" href="/"><img src="/images/logo.png" alt="Cyber Crime Junkies logo" class="logo-img"> Cyber Crime Junkies</a>
-    <a href="/">Home</a>
-    <a href="/book-series">Book Series</a>
-    <a href="/chaos-brief-newsletter">Chaos Brief Newsletter</a>
+    <a href="/speaking">Organizations</a>
+    <a href="/episodes">Listen</a>
+    <a href="/book-series">Read</a>
     <a href="/resources">Resources</a>
-    <a href="/episodes">Episodes</a>
+    <a href="/chaos-brief-newsletter">Chaos Brief</a>
     <a href="/about">About</a>
-    <a href="/speaking">Speaking</a>
-    <a href="/contact">Contact Us</a>
+    <a class="nav-cta" href="/contact">Contact</a>
   </nav>
+  <script>
+  (function () {
+    var p = location.pathname;
+    if (p.length > 1 && p.slice(-1) === "/") { p = p.slice(0, -1); }
+    if (p.indexOf("/episode/") === 0) { p = "/episodes"; }
+    document.querySelectorAll(".nav a:not(.brand)").forEach(function (a) {
+      var h = a.getAttribute("href");
+      if (h !== "/" && (p === h || p.indexOf(h + "/") === 0)) { a.classList.add("active"); }
+    });
+  })();
+  </script>
 </header>"""
 
 
@@ -323,19 +333,59 @@ def render_homepage(episodes):
 <body>
 {nav()}
 <main class="homepage">
-  <section class="hero">
-    <img src="/images/dean-closeup.jpg" alt="Dean Mauro, host of Cyber Crime Junkies" class="hero-img-home">
-        <img src="/images/dean-headshot-2026.jpg" alt="David Dean Mauro, host of Cyber Crime Junkies and author of the Moving Target trilogy" class="hero-img-home">
-    <div>
-      <h1>AI Is Not Evil. It Is Obedient.</h1>
-      <p>It does what you tell it to do. It also does what you fail to tell it not to. Real cybercrime stories and AI security in plain language. Hosted by David Dean Mauro.</p>
-      
+  <section class="hero-full" role="img" aria-label="David Dean Mauro speaking, in a dark empty office">
+    <div class="hero-inner">
+      <h1 class="hero-headline">Cyber Crime Is <br class="m-br"><span class="swap"><del>Computer</del><ins>Organized</ins></span> Crime.<br>Learn How To <span class="hero-red">Stop</span> It.</h1>
+      <p class="hero-sub">Real cybercrime stories, live training for leaders, and the thriller trilogy built from 400+ interviews. Hosted by David Dean Mauro.</p>
     </div>
   </section>
 <div class="proof-band">
     <div class="full"><span>Award-Winning Podcast</span><span class="dot">&middot;</span><span>9 Seasons</span><span class="dot">&middot;</span><span>400+ Interviews</span><span class="dot">&middot;</span><span>#1 Amazon New Release</span><span class="dot">&middot;</span><span>AI Governance</span><span class="dot">&middot;</span><span>Public Speaking</span><span class="dot">&middot;</span><span>Top 100 GoodPods</span></div>
     <div class="sm"><span>Award-Winning</span><span class="dot">&middot;</span><span>400+ Interviews</span><span class="dot">&middot;</span><span>#1 Amazon New Release</span><span class="dot">&middot;</span><span>Top 100 GoodPods</span></div>
   </div>
+  <section class="lanes">
+    <div class="lane-card">
+      <img src="/images/kylie-blazer.jpg" alt="Kylie Jaimeson, Executive Producer of Cyber Crime Junkies, at the studio microphone">
+      <div class="lane-body">
+        <p class="lane-tag">For Organizations</p>
+        <h2>Your Team Is the Target. Train Them First.</h2>
+        <p>Live and virtual cyber and AI training built on real crimes. Your people act on it the same day.</p>
+        <div class="lane-btns">
+          <a class="buy-now-btn" href="/speaking">Find Out More</a>
+          <a class="buy-now-btn lane-btn-alt" href="mailto:cybercrimejunkies@gmail.com">Contact David Dean Today</a>
+        </div>
+      </div>
+    </div>
+    <div class="lane-card">
+      <img src="/images/kylie-hoodie.jpg" alt="Kylie Jaimeson recording an episode of Cyber Crime Junkies">
+      <div class="lane-body">
+        <p class="lane-tag">Listen</p>
+        <h2>400+ Interviews. Zero Jargon.</h2>
+        <p>Federal agents, ransomware negotiators, and the people who got hit, in plain language.</p>
+        <div class="lane-btns">
+          <a class="buy-now-btn" href="/episodes">Start Listening</a>
+        </div>
+      </div>
+    </div>
+    <div class="lane-card">
+      <img src="/images/book3-cover.png" alt="Moving Target Book 3: The Ghost and the Machine cover" class="lane-img-book">
+      <div class="lane-body">
+        <p class="lane-tag">Read</p>
+        <h2>Not Hacked. Selected.</h2>
+        <p>The Moving Target Trilogy. Book 3, The Ghost and the Machine, out now.</p>
+        <div class="lane-btns">
+          <a class="buy-now-btn" href="/book-series">Start With Book 1</a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="spotlight">
+    <h2>Latest Episodes</h2>
+    <div class="episode-grid">
+      {cards}
+    </div>
+    <a class="see-all" href="/episodes">See more episodes</a>
+  </section>
   <section class="buzzsprout-player">
     <div id="buzzsprout-large-player"></div>
     <script type="text/javascript" charset="utf-8" src="https://www.buzzsprout.com/2014652.js?container_id=buzzsprout-large-player&amp;player=large"></script>
@@ -356,12 +406,12 @@ def render_homepage(episodes):
     <img src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
     <img src="/images/speaking-bctc-5.jpg" alt="David Dean Mauro addressing attendees at a live cyber and AI training">
   </section>
-  <section class="spotlight">
-    <h2>Latest Episodes</h2>
-    <div class="episode-grid">
-      {cards}
+  <section class="ep-strip">
+    <img src="/images/kylie-studio.jpg" alt="Kylie Jaimeson, Executive Producer of Cyber Crime Junkies">
+    <div>
+      <h2>Kylie Jaimeson</h2>
+      <p>Executive Producer, Cyber Crime Junkies</p>
     </div>
-    <a class="see-all" href="/episodes">See more episodes</a>
   </section>
   <section class="speaking-banner">
   <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro speaking to a live audience">
@@ -374,6 +424,15 @@ def render_homepage(episodes):
   <img src="/images/speaking-new-2.jpg" alt="David Dean Mauro speaking at a live cybersecurity training">
   <img src="/images/speaking-new-1.jpg" alt="David Dean Mauro presenting to business leaders">
   <img src="/images/speaking-new-3.jpg" alt="Executives attending a Cyber Crime Junkies live training">
+</section>
+<section class="chaos-strip">
+  <h2>The Chaos Brief</h2>
+  <p>Join over 10,000 leaders who subscribe.</p>
+  <div class="lane-btns chaos-btns">
+    <a class="buy-now-btn" href="https://chaosbrief.substack.com/">Subscribe on Substack</a>
+    <a class="buy-now-btn lane-btn-alt" href="https://www.linkedin.com/newsletters/the-chaos-brief-6941459114879311872/">Subscribe on LinkedIn</a>
+  </div>
+  <p class="chaos-guides"><a href="/resources">Free guides: AI prompts, AI governance, and the Moving Target checklist</a></p>
 </section>
 </main>
 {footer()}
@@ -610,8 +669,8 @@ BOOK_SERIES_CONTENT = """
     <img src="/images/book3-cover.png" alt="Book 3: The Ghost and the Machine cover" class="book-cover-img">
     <h3>Book 3: The Ghost and the Machine</h3>
     <p>Stevie already knows she is a target. This book is about what she does about it. The most dangerous thing you can be right now is findable.</p>
-    <p>Releases September 22, 2026.</p>
-    <a class="buy-now-btn" href="https://a.co/d/027LCoh6">Presale Offer &mdash; Live 9/22</a>
+    <p>Available now in paperback, hardcover, Kindle, and audiobook.</p>
+    <a class="buy-now-btn" href="https://a.co/d/027LCoh6">Buy Now</a>
   </div>
 </div>
 <p><a class="buy-now-btn" href="/files/moving-target-media-flyer.pdf" download>Download Media Flyer (PDF)</a></p>
@@ -628,7 +687,7 @@ SPEAKING_CONTENT = """
   <img src="/images/speaking-gallery-2.jpg" alt="David Dean Mauro speaking at a leadership summit" class="speaking-lead-img">
   <div>
     <p>Before Cyber Crime Junkies, David Dean Mauro spent decades as a trial lawyer. He hosts the podcast, sits on FBI InfraGard, serves as VP of Strategic Growth at NetGain Technologies, and wrote the Moving Target trilogy. He has delivered live cyber and AI awareness trainings to organizations across North America and sat across from federal agents, ransomware negotiators, and people who just found out.</p>
-    <p>His talks turn courtroom instinct into boardroom clarity. No jargon. No fear-mongering. Just the real mechanics of how criminals pick their targets, and how to stop being one.</p>
+    <p>His talks bring courtroom instinct into the boardroom. No jargon. No fear-mongering. Just the real mechanics of how criminals pick their targets, and how to stop being one.</p>
   </div>
 </div>
 <h2>Speaking Topics</h2>
@@ -658,12 +717,7 @@ SPEAKING_CONTENT = """
   <img src="/images/speaking-gallery-3.jpg" alt="David Dean Mauro on stage before a large audience">
 </div>
 <div class="about-shelf-row">
-  <div class="resource-card">
-    <img src="/images/newsletter-6.png" alt="AI Goes Rogue cover" class="book-cover-img">
-    <p class="episode-meta">August 05, 2026</p>
-    <h3><a href="https://www.linkedin.com/pulse/ai-agents-dont-need-evil-just-access-without-governance-mauro-jbhve/" target="_blank" rel="noopener">AI Agents Don't Need to Be Evil. Just Access Without Governance.</a></h3>
-    <p>An AI agent does exactly what you connect it to. Nobody told it what not to touch.</p>
-  </div><img src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage at Bluegrass Community and Technical College">
+  <img src="/images/speaking-bctc-1.jpg" alt="David Dean Mauro speaking on stage at Bluegrass Community and Technical College">
   <img src="/images/speaking-bctc-4.jpg" alt="A full room of attendees at a live AI and cybersecurity keynote">
 </div>
 <div class="about-shelf-row">
@@ -778,7 +832,7 @@ Sitemap: {SITE_URL}/sitemap.xml
 """
 
 STYLE_CSS = """
-:root { --navy:#12233d; --blue:#3f6fa3; --bg:#0d1420; --text:#e8edf3; --muted:#9fb0c3; }
+:root { --navy:#12233d; --blue:#3f6fa3; --red:#E3262E; --red-dark:#B71C23; --red-bright:#FF4A4A; --bg:#0d1420; --text:#e8edf3; --muted:#9fb0c3; }
 * { box-sizing: border-box; }
 body { margin:0; overflow-x:hidden; font-family: 'Segoe UI', Arial, sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
 a { color:#7eb2d0; text-decoration:none; }
@@ -835,8 +889,8 @@ audio { width:100%; margin:16px 0; }
 .behind-scenes { margin:40px 0; }
 .behind-scenes img { max-width:500px; width:100%; border-radius:10px; display:block; }
 .book-cover-img { width:100%; max-width:220px; border-radius:6px; margin-bottom:12px; }
-.buy-now-btn { display:inline-block; margin-top:10px; padding:10px 18px; background:var(--blue); color:#fff; border-radius:6px; font-weight:bold; }
-.buy-now-btn:hover { background:#5487bb; text-decoration:none; }
+.buy-now-btn { display:inline-block; margin-top:10px; padding:10px 18px; background:var(--red); color:#fff; border-radius:6px; font-weight:bold; }
+.buy-now-btn:hover { background:var(--red-dark); text-decoration:none; }
 .trailer-section { margin:32px 0; }
 .video-embed { position:relative; width:100%; max-width:700px; padding-bottom:39.375%; height:0; overflow:hidden; border-radius:10px; }
 .video-embed iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:10px; }
@@ -844,7 +898,7 @@ audio { width:100%; margin:16px 0; }
 .resource-card form { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
 .resource-card input[type=email] { padding:10px; border-radius:6px; border:1px solid #2a3b56; background:#0d1420; color:var(--text); }
 .resource-card button.buy-now-btn { border:none; cursor:pointer; font-size:1rem; }
-.about-shelf-row { display:flex; gap:16px; margin:24px 0; flex-wrap:wrap; }
+.about-shelf-row { display:flex; gap:16px; margin:24px 0; flex-wrap:wrap; align-items:flex-start; }
 .about-shelf-row img { width:100%; max-width:380px; border-radius:10px; flex:1; min-width:280px; }
 .team-graphic-img { width:100%; max-width:900px; border-radius:10px; display:block; margin:0 auto; }
 .home-studio-row { display:flex; gap:16px; margin:24px 0; flex-wrap:wrap; }
@@ -856,16 +910,52 @@ h1, h2 { font-family:'Anton', Impact, 'Haettenschweiler', 'Arial Narrow Bold', s
 .hero h1 { font-size:2.8rem; margin-bottom:8px; }
 .home-studio-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0; }
 .home-studio-grid img { width:100%; height:260px; object-fit:cover; border-radius:10px; display:block; }
-.proof-band { position:relative; margin:8px 0 28px; left:50%; margin-left:-50vw; width:100vw; box-sizing:border-box; background:#C55A11; padding:16px 24px; text-align:center; box-shadow:inset 0 -3px 0 rgba(0,0,0,.28); }
-.proof-band span { font-family:'Anton', Impact, 'Arial Narrow Bold', Arial, sans-serif; font-weight:700; font-size:clamp(13px,1.4vw,19px); letter-spacing:1.2px; text-transform:uppercase; color:#1A2235; line-height:1.7; white-space:nowrap; }
-.proof-band .dot { color:#FFFFFF; padding:0 12px; opacity:.8; }
+.proof-band { position:relative; margin:8px 0 28px; left:50%; margin-left:-50vw; width:100vw; box-sizing:border-box; background:var(--red); padding:16px 24px; text-align:center; box-shadow:inset 0 -3px 0 rgba(0,0,0,.28); }
+.proof-band span { font-family:'Anton', Impact, 'Arial Narrow Bold', Arial, sans-serif; font-weight:700; font-size:clamp(13px,1.4vw,19px); letter-spacing:1.2px; text-transform:uppercase; color:#FFFFFF; line-height:1.7; white-space:nowrap; }
+.proof-band .dot { color:#1A2235; padding:0 12px; opacity:.8; }
 .proof-band .sm { display:none; }
 .speaking-banner-overlay .buy-now-btn { align-self:flex-start; }
 @media (max-width:700px) { .home-studio-grid { grid-template-columns:1fr; } .home-studio-grid img { height:220px; } .proof-band { padding:13px 14px; } .proof-band .full { display:none; } .proof-band .sm { display:block; } .proof-band .dot { padding:0 7px; } .speaking-banner img { height:440px; } .speaking-banner-overlay { width:100%; padding:22px; background:linear-gradient(180deg, rgba(18,35,61,0.95) 60%, rgba(18,35,61,0.7) 100%); } .speaking-banner-overlay h2 { font-size:1.15rem; margin-bottom:18px; } }
 .episode-card h3 { color:#ffffff; }
 .episode-card p { color:#7eb2d0; }
 .speaking-lead-img { width:100%; max-width:380px; border-radius:10px; }
-.episode-card .episode-meta { color:var(--muted); }"""
+.episode-card .episode-meta { color:var(--muted); }
+.nav a.active { color:var(--red-bright); border-bottom:2px solid var(--red-bright); padding-bottom:3px; text-decoration:none; }
+.nav a.nav-cta { background:var(--red); color:#fff; padding:8px 16px; border-radius:6px; font-weight:bold; }
+.nav a.nav-cta:hover { background:var(--red-dark); text-decoration:none; }
+.nav a.nav-cta.active { border-bottom:none; padding-bottom:8px; color:#fff; }
+.lanes { display:grid; grid-template-columns:repeat(3, 1fr); gap:20px; margin:8px 0 40px; }
+.lane-card { background:#16233a; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+.lane-card img { width:100%; height:220px; object-fit:cover; object-position:center 25%; display:block; }
+.lane-card img.lane-img-book { object-fit:contain; background:#0d1420; padding:12px; }
+.lane-body { padding:18px; display:flex; flex-direction:column; flex:1; }
+.lane-body .lane-tag { color:var(--red-bright); text-transform:uppercase; letter-spacing:1px; font-size:0.8rem; font-weight:bold; margin:0 0 6px; }
+.lane-body h2 { font-size:1.5rem; margin:0 0 10px; }
+.lane-body p { color:var(--muted); margin:0 0 14px; }
+.lane-btns { margin-top:auto; display:flex; gap:10px; flex-wrap:wrap; }
+.lane-btns .buy-now-btn { margin-top:0; }
+.lane-btn-alt { background:transparent; border:2px solid var(--red); }
+.lane-btn-alt:hover { background:var(--red); }
+.ep-strip { display:flex; gap:24px; align-items:center; background:#16233a; border-radius:10px; padding:20px; margin:32px 0; flex-wrap:wrap; }
+.ep-strip img { width:200px; height:200px; object-fit:cover; border-radius:10px; }
+.ep-strip h2 { margin:0 0 4px; }
+.ep-strip p { margin:0; color:var(--muted); }
+.chaos-strip { background:#16233a; border-radius:10px; padding:28px 24px; margin:32px 0; text-align:center; }
+.chaos-strip h2 { margin:0 0 6px; }
+.chaos-strip p { color:var(--muted); margin:0 0 16px; }
+.chaos-btns { justify-content:center; }
+.chaos-strip .chaos-guides { margin:16px 0 0; }
+.hero-full { position:relative; left:50%; margin-left:-50vw; width:100vw; margin-top:-32px; height:clamp(420px, 41.7vw, 720px); background-color:var(--bg); background-image:linear-gradient(90deg, rgba(13,20,32,0.88) 0%, rgba(13,20,32,0.55) 42%, rgba(13,20,32,0) 62%), url('/images/dm-hero-office.jpg'); background-size:cover, cover; background-position:center, 70% center; background-repeat:no-repeat; display:flex; align-items:center; }
+.hero-inner { width:100%; padding:0 0 0 7vw; }
+.hero-headline { font-family:'Montserrat', 'Arial Black', Arial, sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:0; font-size:clamp(22px, 2.45vw, 50px); line-height:1.15; color:#fff; margin:0 0 18px; white-space:nowrap; padding-top:0.9em; text-shadow:0 2px 12px rgba(0,0,0,0.6); }
+.hero-headline .swap { position:relative; display:inline-block; white-space:nowrap; }
+.hero-headline del { color:#fff; text-decoration:line-through; text-decoration-color:var(--red); text-decoration-thickness:0.2em; }
+.hero-headline ins { position:absolute; left:50%; bottom:72%; transform:translateX(-50%) rotate(-4deg); font-family:'Permanent Marker', 'Brush Script MT', cursive; font-weight:400; color:var(--red-bright); text-decoration:none; font-size:1.1em; white-space:nowrap; }
+.hero-red { color:var(--red-bright); }
+.hero-headline .m-br { display:none; }
+.hero-sub { color:#dfe6ee; font-size:clamp(15px, 1.15vw, 19px); max-width:520px; margin:0; text-shadow:0 1px 8px rgba(0,0,0,0.7); }
+@media (max-width:700px) { .hero-full { height:auto; display:block; padding:28px 0 330px; background-image:linear-gradient(180deg, var(--bg) 0%, var(--bg) 42%, rgba(13,20,32,0) 62%), url('/images/dm-hero-office.jpg'); background-size:100% 100%, auto 380px; background-position:0 0, 78% 100%; } .hero-headline { white-space:normal; font-size:28px; padding-top:0; } .hero-headline .m-br { display:inline; } .hero-headline .swap { margin-top:1.1em; } .hero-inner { padding:0 20px; } .hero-sub { font-size:15px; } }
+@media (max-width:800px) { .lanes { grid-template-columns:1fr; } .nav { gap:14px; } }"""
 
 
 def copy_images():
