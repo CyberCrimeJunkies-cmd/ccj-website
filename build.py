@@ -704,9 +704,9 @@ RESOURCES_CONTENT = """
 <p>Free guides and tools for small business leaders navigating cybersecurity and AI risk. Enter your email to unlock each download.</p>
 <div class="resource-grid">
   <div class="resource-card">
-    <h3>AI Prompt Guide</h3>
     <img loading="lazy" src="/images/resource-ai-prompt-guide.jpg" alt="AI Prompt Guide cover" class="book-cover-img">
-        <p>Sanitize the prompt before you type it. Get the output you wanted the first time. Force the model to flag
+    <h3>AI Prompt Guide</h3>
+    <p>Sanitize the prompt before you type it. Get the output you wanted the first time. Force the model to flag
     what it invented. Four parts, an AI privacy checklist, and the prompts worth saving once and reusing forever.</p>
     <form name="ai-prompt-guide" method="POST" data-netlify="true" action="/resources/ai-prompt-guide-thank-you/">
       <input type="hidden" name="form-name" value="ai-prompt-guide">
@@ -728,7 +728,7 @@ RESOURCES_CONTENT = """
   <div class="resource-card">
   <img loading="lazy" src="/images/resource-camouflage-checklist.jpg" alt="Moving Target Camouflage Checklist cover" class="book-cover-img">
     <h3>Moving Target Camouflage Checklist</h3>
-    <p>The full checklist from the book on one page &mdash; password managers, LinkedIn exposure, people-search
+    <p>The full checklist from the book on one page: password managers, LinkedIn exposure, people-search
     removal, verifying vendors, and the family code word. Ten actions, no jargon.</p>
     <form name="camouflage-checklist" method="POST" data-netlify="true" action="/resources/camouflage-checklist-thank-you/">
       <input type="hidden" name="form-name" value="camouflage-checklist">
@@ -1081,7 +1081,8 @@ audio { width:100%; margin:16px 0; }
 .video-embed { position:relative; width:100%; max-width:700px; padding-bottom:39.375%; height:0; overflow:hidden; border-radius:10px; }
 .video-embed iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:10px; }
 .watch-youtube-link { display:inline-block; margin-top:10px; color:var(--muted); font-size:0.9rem; }
-.resource-card form { margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.resource-card form { margin-top:auto; padding-top:12px; display:flex; flex-direction:column; gap:8px; }
+.resource-grid .resource-card { display:flex; flex-direction:column; }
 .resource-card input[type=email] { padding:10px; border-radius:6px; border:1px solid #2a3b56; background:#0d1420; color:var(--text); }
 .resource-card button.buy-now-btn { border:none; cursor:pointer; font-size:1rem; }
 .about-shelf-row { display:flex; gap:16px; margin:24px 0; flex-wrap:wrap; align-items:flex-start; }
