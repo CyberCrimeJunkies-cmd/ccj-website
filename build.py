@@ -343,6 +343,12 @@ def render_homepage(episodes):
     <div class="full"><span>Award-Winning Podcast</span><span class="dot">&middot;</span><span>9 Seasons</span><span class="dot">&middot;</span><span>400+ Interviews</span><span class="dot">&middot;</span><span>#1 Amazon New Release</span><span class="dot">&middot;</span><span>AI Governance</span><span class="dot">&middot;</span><span>Public Speaking</span><span class="dot">&middot;</span><span>Top 100 GoodPods</span></div>
     <div class="sm"><span>Award-Winning</span><span class="dot">&middot;</span><span>400+ Interviews</span><span class="dot">&middot;</span><span>#1 Amazon New Release</span><span class="dot">&middot;</span><span>Top 100 GoodPods</span></div>
   </div>
+  <section class="trailer-section featured-video">
+    <div class="video-embed">
+      <iframe src="https://www.youtube.com/embed/sRQ9RHo9cyQ" title="Cyber Crime Junkies featured video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <a class="watch-youtube-link" href="https://youtu.be/sRQ9RHo9cyQ">Watch on YouTube</a>
+  </section>
   <section class="lanes">
     <div class="lane-card">
       <img src="/images/kylie-blazer.jpg" alt="Kylie Jaimeson, Executive Producer of Cyber Crime Junkies, at the studio microphone">
@@ -391,12 +397,6 @@ def render_homepage(episodes):
     <script type="text/javascript" charset="utf-8" src="https://www.buzzsprout.com/2014652.js?container_id=buzzsprout-large-player&amp;player=large"></script>
   </section>
 
-  <section class="trailer-section">
-    <div class="video-embed">
-      <iframe src="https://www.youtube.com/embed/B_SoawySWQA" title="Cyber Crime Junkies Trailer" frameborder="0" allowfullscreen loading="lazy"></iframe>
-    </div>
-    <a class="watch-youtube-link" href="https://youtu.be/B_SoawySWQA">Watch on YouTube</a>
-  </section>
 
   <section class="home-studio-grid">
     <img src="/images/home-hacking-hacker.jpg" alt="Cyber Crime Junkies studio shelf with Hacking the Hacker">
@@ -955,6 +955,8 @@ h1, h2 { font-family:'Anton', Impact, 'Haettenschweiler', 'Arial Narrow Bold', s
 .hero-headline .m-br { display:none; }
 .hero-sub { color:#dfe6ee; font-size:clamp(15px, 1.15vw, 19px); max-width:520px; margin:0; text-shadow:0 1px 8px rgba(0,0,0,0.7); }
 @media (max-width:700px) { .hero-full { height:auto; display:block; padding:28px 0 330px; background-image:linear-gradient(180deg, var(--bg) 0%, var(--bg) 42%, rgba(13,20,32,0) 62%), url('/images/dm-hero-office.jpg'); background-size:100% 100%, auto 380px; background-position:0 0, 78% 100%; } .hero-headline { white-space:normal; font-size:28px; padding-top:0; } .hero-headline .m-br { display:inline; } .hero-headline .swap { margin-top:1.1em; } .hero-inner { padding:0 20px; } .hero-sub { font-size:15px; } }
+.featured-video { margin:8px auto 40px; max-width:860px; text-align:center; }
+.featured-video .video-embed { max-width:860px; padding-bottom:56.25%; margin:0 auto; }
 @media (max-width:800px) { .lanes { grid-template-columns:1fr; } .nav { gap:14px; } }"""
 
 
